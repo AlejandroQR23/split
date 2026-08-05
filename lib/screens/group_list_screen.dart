@@ -46,9 +46,7 @@ class _GroupCard extends StatelessWidget {
     final memberCount = group.members.length;
     return ShadCard(
       title: Text(group.name, style: theme.textTheme.h4),
-      description: Text(
-        memberCount == 1 ? '1 member' : '$memberCount members',
-      ),
+      description: Text(memberCount == 1 ? '1 member' : '$memberCount members'),
       child: Padding(
         padding: const EdgeInsets.only(top: AppSpacing.sm),
         child: Wrap(
