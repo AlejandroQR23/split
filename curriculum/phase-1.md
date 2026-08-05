@@ -47,4 +47,4 @@ fixed-length row of member chips inside one group card?
 
 ## Checklist
 
-- [ ] 1.1 Lista de grupos (static, hardcoded data)
+- [x] 1.1 Lista de grupos (static, hardcoded data)
