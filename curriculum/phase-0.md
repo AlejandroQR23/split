@@ -42,7 +42,7 @@ This phase has no user-facing features. Tasks instead of features:
 
 ## Checklist
 
-- [ ] 0.1 Dependencies added and `flutter pub get` succeeds
-- [ ] 0.2 Counter-app boilerplate removed from `lib/main.dart`
-- [ ] 0.3 Folder structure decided and created
-- [ ] 0.4 App builds and runs
+- [x] 0.1 Dependencies added and `flutter pub get` succeeds
+- [x] 0.2 Counter-app boilerplate removed from `lib/main.dart`
+- [x] 0.3 Folder structure decided and created
+- [x] 0.4 App builds and runs
