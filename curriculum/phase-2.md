@@ -5,7 +5,7 @@
 Phase 1's group list was hardcoded — fine for learning widgets, but nothing
 like how the real app needs to work. This phase introduces the two ideas
 that make the rest of the app possible: a repository boundary (`SplitRepository`)
-that hides *where* data comes from behind an interface, with a mock
+that hides _where_ data comes from behind an interface, with a mock
 implementation behind it for now; and Riverpod, which lets widgets read that
 repository's data reactively without manually threading it through
 constructors. By the end of this phase, the Phase 1 screen is rebuilt to
@@ -70,5 +70,5 @@ now, that branching is visually plain?
 
 ## Checklist
 
-- [ ] 2.1 Repositorio de grupos vía Riverpod
-- [ ] 2.2 Estado de carga simple
+- [x] 2.1 Repositorio de grupos vía Riverpod
+- [x] 2.2 Estado de carga simple
