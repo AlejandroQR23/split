@@ -41,7 +41,7 @@ class ScreenHeader extends StatelessWidget {
               title,
               style: isMainScreen
                   ? AppTypography.screenTitle
-                  : AppTypography.textTheme.h4,
+                  : AppTypography.textTheme.h3,
             ),
           ),
         ],
