@@ -1,5 +1,6 @@
 import '../models/group.dart';
 import '../models/member.dart';
+import 'current_user.dart';
 
 /// Hardcoded, in-memory groups for Phase 1 — no repository, no persistence.
 const mockGroups = <Group>[
@@ -7,10 +8,11 @@ const mockGroups = <Group>[
     id: 'g1',
     name: 'Trip to Lisbon',
     members: [
-      Member(id: 'm1', name: 'Alejandro'),
+      Member(id: 'm1', name: 'Mateo'),
       Member(id: 'm2', name: 'Sara'),
       Member(id: 'm3', name: 'Diego'),
       Member(id: 'm4', name: 'Nadia'),
+      currentUser,
     ],
   ),
   Group(
@@ -19,6 +21,7 @@ const mockGroups = <Group>[
     members: [
       Member(id: 'm5', name: 'Marcus'),
       Member(id: 'm6', name: 'Priya'),
+      currentUser,
     ],
   ),
   Group(
@@ -30,6 +33,7 @@ const mockGroups = <Group>[
       Member(id: 'm9', name: 'Yuki'),
       Member(id: 'm10', name: 'Ben'),
       Member(id: 'm11', name: 'Carla'),
+      currentUser,
     ],
   ),
 ];
