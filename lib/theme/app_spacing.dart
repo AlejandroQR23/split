@@ -15,16 +15,17 @@ abstract class AppSpacing {
   static const xxxl = 48.0;
 }
 
-/// Corner radii. [md] is the app-wide default (buttons, inputs, chips);
-/// [lg] is used for cards/sheets; [pill] for fully-rounded shapes like the
-/// floating nav bar.
+/// Corner radii. [md] is the app-wide default (inputs, chips); [lg] is used
+/// for cards/sheets; [xl] for large hero surfaces; [pill] for fully-rounded
+/// shapes — the floating nav bar and, per the current brand reference, all
+/// buttons.
 abstract class AppRadii {
   AppRadii._();
 
-  static const sm = 8.0;
-  static const md = 10.0;
-  static const lg = 14.0;
-  static const xl = 20.0;
+  static const sm = 12.0;
+  static const md = 16.0;
+  static const lg = 24.0;
+  static const xl = 32.0;
   static const pill = 999.0;
 }
 

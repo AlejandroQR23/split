@@ -10,10 +10,10 @@ a human or a coding agent about to build UI in this app, read this first.
 
 ## The vibe
 
-Clean, flat, confident. Generous whitespace, softly rounded corners, one
-accent color used sparingly (primary buttons, active states, positive
-amounts). Body copy is near-black, not pure black. No gradients, no heavy
-shadows, no visual noise.
+Clean, flat, confident. Generous whitespace, generously rounded corners —
+fully pill-shaped buttons, large-radius cards — one accent color used
+sparingly (primary buttons, active states, positive amounts). Body copy is
+near-black, not pure black. No gradients, no heavy shadows, no visual noise.
 
 ## Golden rule
 
@@ -146,13 +146,19 @@ Use for all `EdgeInsets`, `SizedBox` gaps, etc. — don't write raw numbers.
 
 ### `AppRadii` — corner radius scale
 
-| Token  | Value | Use for                                                                          |
-| ------ | ----- | -------------------------------------------------------------------------------- |
-| `sm`   | 8     | Small elements (chips, small badges)                                             |
-| `md`   | 10    | **App-wide default** — buttons, inputs, most components (`ShadThemeData.radius`) |
-| `lg`   | 14    | Cards, sheets                                                                    |
-| `xl`   | 20    | Large surfaces                                                                   |
-| `pill` | 999   | Fully-rounded shapes (floating nav bar, active nav pill)                         |
+| Token  | Value | Use for                                                                                       |
+| ------ | ----- | ---------------------------------------------------------------------------------------------- |
+| `sm`   | 12    | Small elements (chips, small badges)                                                          |
+| `md`   | 16    | **App-wide default** — inputs and most non-button/card components (`ShadThemeData.radius`)    |
+| `lg`   | 24    | Cards, sheets (`ShadCardTheme.radius`)                                                        |
+| `xl`   | 32    | Large hero surfaces (e.g. a big balance card)                                                 |
+| `pill` | 999   | Fully-rounded shapes — floating nav bar, active nav pill, **and every `ShadButton` variant**  |
+
+Buttons are wired to `pill` explicitly (not `md`) in `app_theme.dart` — every
+`ShadButton` variant (primary, secondary, destructive, outline, ghost) is
+fully stadium-shaped, per the brand reference. Cards are wired to `lg`
+explicitly via `cardTheme.radius`; without that override they'd fall back to
+the global `md` radius like inputs do.
 
 ### `AppShadows` — ink-tinted, not pure black
 
@@ -194,8 +200,9 @@ ShadButton.destructive(onPressed: () {}, child: const Text('Delete'));    // red
 ShadButton.outline(...) / ShadButton.ghost(...) / ShadButton.link(...)    // as needed
 ```
 
-Colors/radius come from `AppTheme.light` automatically — don't pass
-`backgroundColor` etc. per call unless a one-off truly needs it.
+Colors/radius come from `AppTheme.light` automatically — every variant is
+fully pill-shaped (`AppRadii.pill`). Don't pass `backgroundColor` etc. per
+call unless a one-off truly needs it.
 
 ### Cards — `ShadCard`
 
@@ -207,7 +214,8 @@ ShadCard(
 );
 ```
 
-Already themed with `AppColors.background` + `AppShadows.card`.
+Already themed with `AppColors.background` + `AppShadows.card` +
+`AppRadii.lg` corners.
 
 ### Icons — Lucide, via shadcn_ui's export
 
