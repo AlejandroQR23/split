@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/current_user_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
@@ -15,53 +16,6 @@ import '../../models/group.dart';
 import '../../models/member.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-
-List<Settlement> _computeSettlements(
-  List<Expense> expenses,
-  Member currentUser,
-) {
-  final netByMemberId = <String, double>{};
-  final memberById = <String, Member>{};
-  final conceptsByMemberId = <String, List<String>>{};
-
-  void record(Member counterparty, double amount, String concept) {
-    netByMemberId.update(
-      counterparty.id,
-      (value) => value + amount,
-      ifAbsent: () => amount,
-    );
-    memberById[counterparty.id] = counterparty;
-    (conceptsByMemberId[counterparty.id] ??= []).add(concept);
-  }
-
-  for (final expense in expenses) {
-    if (expense.paidBy.id == currentUser.id) {
-      for (final share in expense.shares) {
-        if (share.member.id == currentUser.id) continue;
-        record(share.member, share.amount, expense.concept);
-      }
-    } else {
-      for (final share in expense.shares) {
-        if (share.member.id != currentUser.id) continue;
-        record(expense.paidBy, -share.amount, expense.concept);
-      }
-    }
-  }
-
-  final settlements = <Settlement>[
-    for (final entry in netByMemberId.entries)
-      if (entry.value != 0)
-        Settlement(
-          member: memberById[entry.key]!,
-          netAmount: entry.value,
-          summary: conceptsByMemberId[entry.key]!.length == 1
-              ? conceptsByMemberId[entry.key]!.first
-              : '${conceptsByMemberId[entry.key]!.length} expenses',
-        ),
-  ];
-  settlements.sort((a, b) => b.netAmount.abs().compareTo(a.netAmount.abs()));
-  return settlements;
-}
 
 class GroupDetailsScreen extends ConsumerWidget {
   final String groupId;
@@ -105,7 +59,7 @@ class GroupDetailsScreen extends ConsumerWidget {
 
     final group = groupsResponse.value.firstWhere((g) => g.id == groupId);
     final expenses = expensesResponse.value;
-    final settlements = _computeSettlements(expenses, currentUser);
+    final settlements = computeSettlements(expenses, currentUser);
 
     return _GroupDetailsContent(
       group: group,
@@ -145,7 +99,11 @@ class _GroupDetailsContent extends StatelessWidget {
         bottom: AppSpacing.xxxl * 2,
       ),
       children: [
-        BalanceSummaryCard(youOwe: youOwe, youAreOwed: youAreOwed),
+        BalanceSummaryCard(
+          youOwe: youOwe,
+          youAreOwed: youAreOwed,
+          onAddExpense: () => context.push('/add-expense?groupId=${group.id}'),
+        ),
         const SizedBox(height: AppSpacing.xl),
         PendingSettlementsSection(settlements: settlements),
         const SizedBox(height: AppSpacing.xl),
