@@ -7,7 +7,7 @@ screen to actually be an app. This phase introduces go_router — declarative,
 URL-shaped routing — and uses it to connect the group list to a per-group
 detail screen. The interesting part isn't "add a second screen," it's
 passing a specific group's identity through the route itself, so the detail
-screen knows *which* group's expenses to show.
+screen knows _which_ group's expenses to show.
 
 ## Libraries / tools used this phase
 
@@ -43,4 +43,4 @@ exist?
 
 ## Checklist
 
-- [ ] 3.1 Detalle de grupo con historial de gastos
+- [x] 3.1 Detalle de grupo con historial de gastos
