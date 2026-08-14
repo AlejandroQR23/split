@@ -70,7 +70,7 @@ class _GroupCard extends StatelessWidget {
     final memberCount = group.members.length;
 
     return GestureDetector(
-      onTap: () => context.go('/group/${group.id}'),
+      onTap: () => context.go('/groups/group/${group.id}'),
       child: ShadCard(
         title: Text(group.name, style: theme.textTheme.h4),
         description: Text(
