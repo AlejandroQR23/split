@@ -3,17 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'screens/balances/balance_details_screen.dart';
-import 'screens/balances/balance_list_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
+import 'screens/home/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'widgets/navigation/screen_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _groupsShellNavigatorKey =
+final GlobalKey<NavigatorState> _homeShellNavigatorKey =
     GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _balancesShellNavigatorKey =
+final GlobalKey<NavigatorState> _groupsShellNavigatorKey =
     GlobalKey<NavigatorState>();
 
 final _router = GoRouter(
@@ -25,10 +24,16 @@ final _router = GoRouter(
       },
       branches: [
         StatefulShellBranch(
+          navigatorKey: _homeShellNavigatorKey,
+          routes: [
+            GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+          ],
+        ),
+        StatefulShellBranch(
           navigatorKey: _groupsShellNavigatorKey,
           routes: [
             GoRoute(
-              path: '/',
+              path: '/groups',
               builder: (context, state) => const GroupListScreen(),
               routes: [
                 GoRoute(
@@ -36,24 +41,6 @@ final _router = GoRouter(
                   builder: (context, state) {
                     final groupId = state.pathParameters['groupId']!;
                     return GroupDetailsScreen(groupId: groupId);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          navigatorKey: _balancesShellNavigatorKey,
-          routes: [
-            GoRoute(
-              path: '/balances',
-              builder: (context, state) => const BalanceListScreen(),
-              routes: [
-                GoRoute(
-                  path: ':balanceId',
-                  builder: (context, state) {
-                    final balanceId = state.pathParameters['balanceId']!;
-                    return BalanceDetailsScreen(balanceId: balanceId);
                   },
                 ),
               ],
