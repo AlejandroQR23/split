@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
-import '../theme/app_colors.dart';
-import '../theme/app_spacing.dart';
-import '../theme/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_typography.dart';
 
 /// One destination in a [FloatingNavBar].
 class FloatingNavItem {
@@ -25,7 +25,7 @@ class FloatingNavBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
-  }) : assert(items.length >= 2, 'FloatingNavBar needs at least 2 items');
+  }) : assert(items.length >= 1, 'FloatingNavBar needs at least 1 item');
 
   final List<FloatingNavItem> items;
   final int currentIndex;
@@ -50,14 +50,16 @@ class FloatingNavBar extends StatelessWidget {
               vertical: AppSpacing.sm,
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                for (var i = 0; i < items.length; i++)
+                for (var i = 0; i < items.length; i++) ...[
+                  if (i > 0) const SizedBox(width: AppSpacing.xs),
                   _NavItem(
                     item: items[i],
                     selected: i == currentIndex,
                     onTap: () => onTap(i),
                   ),
+                ],
               ],
             ),
           ),
@@ -81,6 +83,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = selected ? AppColors.primary : AppColors.mutedForeground;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -99,13 +102,11 @@ class _NavItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(item.icon, size: 22, color: color),
-            if (selected) ...[
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                item.label,
-                style: AppTypography.navLabel.copyWith(color: color),
-              ),
-            ],
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              item.label,
+              style: AppTypography.navLabel.copyWith(color: color),
+            ),
           ],
         ),
       ),
