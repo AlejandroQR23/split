@@ -3,13 +3,12 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../theme/app_spacing.dart';
 import '../../theme/app_typography.dart';
-
-String _formatAmount(double amount) => '\$${amount.toStringAsFixed(2)}';
+import '../../utils/formatting.dart';
 
 String _formatSignedAmount(double amount) {
-  if (amount == 0) return _formatAmount(0);
+  if (amount == 0) return formatAmount(0);
   final sign = amount > 0 ? '+' : '-';
-  return '$sign${_formatAmount(amount.abs())}';
+  return '$sign${formatAmount(amount.abs())}';
 }
 
 class BalanceSummaryCard extends StatelessWidget {
@@ -17,10 +16,14 @@ class BalanceSummaryCard extends StatelessWidget {
     super.key,
     required this.youOwe,
     required this.youAreOwed,
+    this.onAddExpense,
   });
 
   final double youOwe;
   final double youAreOwed;
+
+  /// Shown as an "Add expense" button when provided.
+  final VoidCallback? onAddExpense;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,17 @@ class BalanceSummaryCard extends StatelessWidget {
               ),
             ],
           ),
+          if (onAddExpense != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              width: double.infinity,
+              child: ShadButton(
+                leading: const Icon(LucideIcons.plus, size: 16),
+                onPressed: onAddExpense,
+                child: const Text('Add expense'),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -89,7 +103,7 @@ class BalanceStat extends StatelessWidget {
         Text(label, style: theme.textTheme.muted),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          _formatAmount(amount),
+          formatAmount(amount),
           style: theme.textTheme.h4.copyWith(color: color),
         ),
       ],

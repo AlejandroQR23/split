@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../models/expense.dart';
 import '../../models/member.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../utils/formatting.dart';
+import '../shared/avatar.dart';
 
 /// One other member's net balance with the current user, aggregated across
-/// every expense they share in a group. Positive [netAmount] means they owe
-/// the current user; negative means the current user owes them.
+/// every expense they share. Positive [netAmount] means they owe the
+/// current user; negative means the current user owes them.
 class Settlement {
   const Settlement({
     required this.member,
@@ -20,7 +23,55 @@ class Settlement {
   final String summary;
 }
 
-String _formatAmount(double amount) => '\$${amount.toStringAsFixed(2)}';
+/// Nets [expenses] against [currentUser] into one [Settlement] per
+/// counterparty, aggregating across every expense they share and dropping
+/// counterparties who net to zero.
+List<Settlement> computeSettlements(
+  List<Expense> expenses,
+  Member currentUser,
+) {
+  final netByMemberId = <String, double>{};
+  final memberById = <String, Member>{};
+  final conceptsByMemberId = <String, List<String>>{};
+
+  void record(Member counterparty, double amount, String concept) {
+    netByMemberId.update(
+      counterparty.id,
+      (value) => value + amount,
+      ifAbsent: () => amount,
+    );
+    memberById[counterparty.id] = counterparty;
+    (conceptsByMemberId[counterparty.id] ??= []).add(concept);
+  }
+
+  for (final expense in expenses) {
+    if (expense.paidBy.id == currentUser.id) {
+      for (final share in expense.shares) {
+        if (share.member.id == currentUser.id) continue;
+        record(share.member, share.amount, expense.concept);
+      }
+    } else {
+      for (final share in expense.shares) {
+        if (share.member.id != currentUser.id) continue;
+        record(expense.paidBy, -share.amount, expense.concept);
+      }
+    }
+  }
+
+  final settlements = <Settlement>[
+    for (final entry in netByMemberId.entries)
+      if (entry.value != 0)
+        Settlement(
+          member: memberById[entry.key]!,
+          netAmount: entry.value,
+          summary: conceptsByMemberId[entry.key]!.length == 1
+              ? conceptsByMemberId[entry.key]!.first
+              : '${conceptsByMemberId[entry.key]!.length} expenses',
+        ),
+  ];
+  settlements.sort((a, b) => b.netAmount.abs().compareTo(a.netAmount.abs()));
+  return settlements;
+}
 
 class SettlementCard extends StatelessWidget {
   const SettlementCard({super.key, required this.settlement});
@@ -44,7 +95,11 @@ class SettlementCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              _InitialsAvatar(name: fromName),
+              Avatar(
+                name: fromName,
+                backgroundColor: AppColors.primaryTint,
+                foregroundColor: theme.colorScheme.primary,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 child: Icon(
@@ -53,13 +108,17 @@ class SettlementCard extends StatelessWidget {
                   color: theme.colorScheme.mutedForeground,
                 ),
               ),
-              _InitialsAvatar(name: toName),
+              Avatar(
+                name: toName,
+                backgroundColor: AppColors.primaryTint,
+                foregroundColor: theme.colorScheme.primary,
+              ),
               const Spacer(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    _formatAmount(settlement.netAmount.abs()),
+                    formatAmount(settlement.netAmount.abs()),
                     style: theme.textTheme.h4.copyWith(color: amountColor),
                   ),
                   const SizedBox(height: AppSpacing.xs),
@@ -73,27 +132,6 @@ class SettlementCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(settlement.summary, style: theme.textTheme.muted),
         ],
-      ),
-    );
-  }
-}
-
-class _InitialsAvatar extends StatelessWidget {
-  const _InitialsAvatar({required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-
-    return CircleAvatar(
-      radius: 18,
-      backgroundColor: AppColors.primaryTint,
-      child: Text(
-        initial,
-        style: theme.textTheme.large.copyWith(color: theme.colorScheme.primary),
       ),
     );
   }

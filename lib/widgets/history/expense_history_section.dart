@@ -3,28 +3,9 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../models/expense.dart';
 import '../../models/member.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-
-const _monthAbbreviations = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-String _formatDate(DateTime date) =>
-    '${_monthAbbreviations[date.month - 1]} ${date.day}, ${date.year}';
-
-String _formatAmount(double amount) => '\$${amount.toStringAsFixed(2)}';
+import '../../utils/formatting.dart';
+import '../shared/avatar.dart';
 
 class ExpenseHistorySection extends StatelessWidget {
   const ExpenseHistorySection({
@@ -86,26 +67,12 @@ class _ExpenseHistoryTile extends StatelessWidget {
     final payerLabel = expense.paidBy.id == currentUser.id
         ? 'You'
         : expense.paidBy.name;
-    final initial = expense.paidBy.id == currentUser.id
-        ? 'Y'
-        : expense.paidBy.name.isNotEmpty
-        ? expense.paidBy.name[0].toUpperCase()
-        : '?';
 
     return ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColors.surface,
-            child: Text(
-              initial,
-              style: theme.textTheme.large.copyWith(
-                color: theme.colorScheme.mutedForeground,
-              ),
-            ),
-          ),
+          Avatar(name: payerLabel),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
@@ -114,14 +81,14 @@ class _ExpenseHistoryTile extends StatelessWidget {
                 Text(expense.concept, style: theme.textTheme.large),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Paid by $payerLabel · ${_formatDate(expense.date)}',
+                  'Paid by $payerLabel · ${formatDate(expense.date)}',
                   style: theme.textTheme.muted,
                 ),
               ],
             ),
           ),
           Text(
-            _formatAmount(expense.amount),
+            formatAmount(expense.amount),
             style: theme.textTheme.h4.copyWith(
               color: theme.colorScheme.foreground,
             ),
