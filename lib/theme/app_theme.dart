@@ -17,9 +17,7 @@ abstract class AppTheme {
   /// reference, where buttons are stadium-shaped and cards are just
   /// generously rounded.
   static final _pillButtonDecoration = ShadDecoration(
-    border: ShadBorder.all(
-      radius: BorderRadius.circular(AppRadii.pill),
-    ),
+    border: ShadBorder.all(radius: BorderRadius.circular(AppRadii.pill)),
   );
 
   /// The app's only theme — light only, no dark mode.
@@ -46,9 +44,7 @@ abstract class AppTheme {
       pressedForegroundColor: AppColors.ink,
       decoration: _pillButtonDecoration,
     ),
-    destructiveButtonTheme: ShadButtonTheme(
-      decoration: _pillButtonDecoration,
-    ),
+    destructiveButtonTheme: ShadButtonTheme(decoration: _pillButtonDecoration),
     outlineButtonTheme: ShadButtonTheme(decoration: _pillButtonDecoration),
     ghostButtonTheme: ShadButtonTheme(decoration: _pillButtonDecoration),
     cardTheme: ShadCardTheme(
