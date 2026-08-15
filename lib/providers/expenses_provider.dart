@@ -18,6 +18,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       await mutation();
       return await repository.fetchExpensesForGroup(groupId);
     });
+    ref.invalidate(allExpensesProvider);
   }
 
   Future<void> addExpense(Expense expense) async {
@@ -46,4 +47,16 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 final expensesProvider =
     AsyncNotifierProvider.family<ExpensesNotifier, List<Expense>, String>(
       (groupId) => ExpensesNotifier(groupId),
+    );
+
+class AllExpensesNotifier extends AsyncNotifier<List<Expense>> {
+  @override
+  Future<List<Expense>> build() {
+    return ref.watch(expenseRepositoryProvider).fetchExpenses();
+  }
+}
+
+final allExpensesProvider =
+    AsyncNotifierProvider<AllExpensesNotifier, List<Expense>>(
+      AllExpensesNotifier.new,
     );
