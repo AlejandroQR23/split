@@ -4,6 +4,7 @@ import 'package:split/models/expense.dart';
 final delayDuration = const Duration(seconds: 2);
 
 abstract class ExpenseRepository {
+  Future<List<Expense>> fetchExpenses();
   Future<List<Expense>> fetchExpensesForGroup(String groupId);
   Future<void> addExpense(Expense expense);
   Future<void> removeExpense(String expenseId);
@@ -12,6 +13,12 @@ abstract class ExpenseRepository {
 
 class ExpenseRepositoryImpl implements ExpenseRepository {
   final List<Expense> _expenses = List.of(mockExpenses);
+
+  @override
+  Future<List<Expense>> fetchExpenses() async {
+    await Future.delayed(delayDuration);
+    return List.of(_expenses);
+  }
 
   @override
   Future<List<Expense>> fetchExpensesForGroup(String groupId) async {
