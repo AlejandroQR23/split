@@ -9,11 +9,15 @@ class GroupsNotifier extends AsyncNotifier<List<Group>> {
   }
 
   Future<void> _mutateAndRefresh(Future<void> Function() mutation) async {
-    state = await AsyncValue.guard(() async {
+    final previous = state;
+    try {
       final repository = ref.read(groupRepositoryProvider);
       await mutation();
-      return await repository.fetchGroups();
-    });
+      state = AsyncData(await repository.fetchGroups());
+    } catch (error, stackTrace) {
+      state = previous.hasValue ? previous : AsyncError(error, stackTrace);
+      rethrow;
+    }
   }
 
   Future<void> addGroup(Group group) async {
