@@ -30,7 +30,12 @@ class GroupDetailsScreen extends ConsumerWidget {
 
     final theme = ShadTheme.of(context);
 
-    if (groupsResponse is AsyncError) {
+    // groupsProvider/expensesProvider keep serving their last-known-good
+    // list on a failed mutation instead of surfacing an error state (see
+    // _mutateAndRefresh in each), so hasError here only ever means "never
+    // successfully loaded" — checking hasValue first keeps that explicit
+    // rather than relying on that provider-side contract silently.
+    if (groupsResponse.hasError && !groupsResponse.hasValue) {
       return Center(
         child: Text(
           'Error: ${groupsResponse.error}',
@@ -40,7 +45,7 @@ class GroupDetailsScreen extends ConsumerWidget {
         ),
       );
     }
-    if (expensesResponse is AsyncError) {
+    if (expensesResponse.hasError && !expensesResponse.hasValue) {
       return Center(
         child: Text(
           'Error: ${expensesResponse.error}',
@@ -50,15 +55,16 @@ class GroupDetailsScreen extends ConsumerWidget {
         ),
       );
     }
-    if (groupsResponse is! AsyncData<List<Group>> ||
-        expensesResponse is! AsyncData<List<Expense>>) {
+    if (!groupsResponse.hasValue || !expensesResponse.hasValue) {
       return Center(
         child: CircularProgressIndicator(color: theme.colorScheme.primary),
       );
     }
 
-    final group = groupsResponse.value.firstWhere((g) => g.id == groupId);
-    final expenses = expensesResponse.value;
+    final group = groupsResponse.requireValue.firstWhere(
+      (g) => g.id == groupId,
+    );
+    final expenses = expensesResponse.requireValue;
     final settlements = computeSettlements(expenses, currentUser);
 
     return _GroupDetailsContent(
