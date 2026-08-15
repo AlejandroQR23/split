@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../models/expense.dart';
 import '../../models/group.dart';
 import '../../providers/expenses_provider.dart';
 import '../../providers/groups_provider.dart';
@@ -75,26 +74,30 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     final splitMembers = group.members
         .where((m) => _splitMemberIds.contains(m.id))
         .toList();
-    final shareAmount = amount / splitMembers.length;
-
-    final expense = Expense(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      groupId: group.id,
-      concept: concept,
-      amount: amount,
-      paidBy: payer,
-      shares: [
-        for (final member in splitMembers)
-          ExpenseShare(member: member, amount: shareAmount),
-      ],
-      date: DateTime.now(),
-    );
 
     setState(() => _isSubmitting = true);
-    await ref.read(expensesProvider(group.id).notifier).addExpense(expense);
+    try {
+      await ref
+          .read(expensesProvider(group.id).notifier)
+          .addEvenExpense(
+            concept: concept,
+            amount: amount,
+            paidBy: payer,
+            splitBetween: splitMembers,
+          );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ShadToaster.of(context).show(
+        ShadToast.destructive(
+          title: const Text('Could not save expense'),
+          description: Text('$error'),
+        ),
+      );
+      return;
+    }
 
     if (!mounted) return;
-
     context.pop();
   }
 
