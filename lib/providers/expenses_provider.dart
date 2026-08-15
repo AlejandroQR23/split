@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/expense.dart';
+import 'package:split/models/member.dart';
 import 'package:split/repositories/expense_repository.dart';
 
 class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
@@ -13,15 +14,56 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
   }
 
   Future<void> _mutateAndRefresh(Future<void> Function() mutation) async {
-    state = await AsyncValue.guard(() async {
+    final previous = state;
+    try {
       final repository = ref.read(expenseRepositoryProvider);
       await mutation();
-      return await repository.fetchExpensesForGroup(groupId);
-    });
-    ref.invalidate(allExpensesProvider);
+      state = AsyncData(await repository.fetchExpensesForGroup(groupId));
+      ref.invalidate(allExpensesProvider);
+    } catch (error, stackTrace) {
+      state = previous.hasValue ? previous : AsyncError(error, stackTrace);
+      rethrow;
+    }
   }
 
-  Future<void> addExpense(Expense expense) async {
+  /// Builds an even-split [Expense] from the raw selections made on the
+  /// add-expense form and saves it — the screen hands over what the user
+  /// picked, not a constructed [Expense].
+  ///
+  /// Splits in whole cents so shares always sum to exactly [amount] (a
+  /// naive `amount / count` division leaves floating-point drift, e.g.
+  /// $10 / 3 doesn't divide evenly). Any leftover cent(s) go to [paidBy]
+  /// if they're one of the [splitBetween] members, otherwise to the first
+  /// one.
+  Future<void> addEvenExpense({
+    required String concept,
+    required double amount,
+    required Member paidBy,
+    required List<Member> splitBetween,
+  }) async {
+    final amountCents = (amount * 100).round();
+    final splitCount = splitBetween.length;
+    final baseCents = amountCents ~/ splitCount;
+    final remainderCents = amountCents % splitCount;
+    final payerIndex = splitBetween.indexWhere((m) => m.id == paidBy.id);
+    final remainderIndex = payerIndex != -1 ? payerIndex : 0;
+
+    final expense = Expense(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      groupId: groupId,
+      concept: concept,
+      amount: amount,
+      paidBy: paidBy,
+      shares: [
+        for (var i = 0; i < splitCount; i++)
+          ExpenseShare(
+            member: splitBetween[i],
+            amount:
+                (baseCents + (i == remainderIndex ? remainderCents : 0)) / 100,
+          ),
+      ],
+      date: DateTime.now(),
+    );
     await _mutateAndRefresh(
       () => ref.read(expenseRepositoryProvider).addExpense(expense),
     );
