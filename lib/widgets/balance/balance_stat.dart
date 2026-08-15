@@ -38,7 +38,7 @@ class BalanceSummaryCard extends StatelessWidget {
     return ShadCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('Your balance', style: theme.textTheme.muted),
           const SizedBox(height: AppSpacing.xs),
@@ -98,7 +98,7 @@ class BalanceStat extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(label, style: theme.textTheme.muted),
         const SizedBox(height: AppSpacing.xs),
