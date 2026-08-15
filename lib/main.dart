@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import 'screens/expenses/add_expense_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -18,6 +19,13 @@ final GlobalKey<NavigatorState> _groupsShellNavigatorKey =
 final _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   routes: [
+    GoRoute(
+      path: '/add-expense',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        return AddExpenseScreen(groupId: state.uri.queryParameters['groupId']);
+      },
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScreenScaffold(child: navigationShell);
