@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:split/helpers/compute_settlements.dart';
 import 'package:split/providers/current_user_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
 import 'package:split/providers/groups_provider.dart';
@@ -9,7 +10,6 @@ import 'package:split/widgets/balance/balance_stat.dart';
 import 'package:split/widgets/groups/recent_groups_section.dart';
 import 'package:split/widgets/history/recent_activity_section.dart';
 import 'package:split/widgets/navigation/screen_header.dart';
-import 'package:split/widgets/settlement/settlement_card.dart';
 
 import '../../models/expense.dart';
 import '../../models/group.dart';

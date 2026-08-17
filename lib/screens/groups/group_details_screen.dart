@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:split/helpers/compute_settlements.dart';
 import 'package:split/providers/current_user_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
 import 'package:split/providers/groups_provider.dart';
@@ -9,11 +10,11 @@ import 'package:split/widgets/balance/balance_stat.dart';
 import 'package:split/widgets/history/expense_history_section.dart';
 import 'package:split/widgets/navigation/screen_header.dart';
 import 'package:split/widgets/settlement/pending_settlement.dart';
-import 'package:split/widgets/settlement/settlement_card.dart';
 
 import '../../models/expense.dart';
 import '../../models/group.dart';
 import '../../models/member.dart';
+import '../../models/transfer.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -65,12 +66,12 @@ class GroupDetailsScreen extends ConsumerWidget {
       (g) => g.id == groupId,
     );
     final expenses = expensesResponse.requireValue;
-    final settlements = computeSettlements(expenses, currentUser);
+    final transfers = computeTransfers(expenses: expenses, members: group.members);
 
     return _GroupDetailsContent(
       group: group,
       expenses: expenses,
-      settlements: settlements,
+      transfers: transfers,
       currentUser: currentUser,
     );
   }
@@ -80,23 +81,23 @@ class _GroupDetailsContent extends StatelessWidget {
   const _GroupDetailsContent({
     required this.group,
     required this.expenses,
-    required this.settlements,
+    required this.transfers,
     required this.currentUser,
   });
 
   final Group group;
   final List<Expense> expenses;
-  final List<Settlement> settlements;
+  final List<Transfer> transfers;
   final Member currentUser;
 
   @override
   Widget build(BuildContext context) {
-    final youOwe = settlements
-        .where((s) => s.netAmount < 0)
-        .fold(0.0, (sum, s) => sum + s.netAmount.abs());
-    final youAreOwed = settlements
-        .where((s) => s.netAmount > 0)
-        .fold(0.0, (sum, s) => sum + s.netAmount);
+    final youOwe = transfers
+        .where((t) => t.from == currentUser.id)
+        .fold(0.0, (sum, t) => sum + t.amount);
+    final youAreOwed = transfers
+        .where((t) => t.to == currentUser.id)
+        .fold(0.0, (sum, t) => sum + t.amount);
 
     final body = ListView(
       padding: const EdgeInsets.only(
@@ -111,7 +112,11 @@ class _GroupDetailsContent extends StatelessWidget {
           onAddExpense: () => context.push('/add-expense?groupId=${group.id}'),
         ),
         const SizedBox(height: AppSpacing.xl),
-        PendingSettlementsSection(settlements: settlements),
+        PendingSettlementsSection(
+          transfers: transfers,
+          currentUser: currentUser,
+          members: group.members,
+        ),
         const SizedBox(height: AppSpacing.xl),
         ExpenseHistorySection(expenses: expenses, currentUser: currentUser),
       ],
