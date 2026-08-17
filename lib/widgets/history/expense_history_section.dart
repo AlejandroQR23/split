@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:split/widgets/animations/reveal_animation_state.dart';
+import 'package:split/widgets/animations/staggered_reveal_items.dart';
 
 import '../../models/expense.dart';
 import '../../models/member.dart';
@@ -7,7 +9,7 @@ import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
 import '../shared/avatar.dart';
 
-class ExpenseHistorySection extends StatelessWidget {
+class ExpenseHistorySection extends StatefulWidget {
   const ExpenseHistorySection({
     super.key,
     required this.expenses,
@@ -18,10 +20,25 @@ class ExpenseHistorySection extends StatelessWidget {
   final Member currentUser;
 
   @override
+  State<ExpenseHistorySection> createState() => _ExpenseHistorySectionState();
+}
+
+class _ExpenseHistorySectionState
+    extends RevealAnimationState<ExpenseHistorySection, Expense> {
+  List<Expense> _getSortedExpenses(ExpenseHistorySection widget) {
+    final sortedExpenses = widget.expenses.toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+    return sortedExpenses;
+  }
+
+  @override
+  List<Expense> getItems(ExpenseHistorySection widget) =>
+      _getSortedExpenses(widget);
+
+  @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final sortedExpenses = expenses.toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+    final sortedExpenses = _getSortedExpenses(widget);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,10 +63,17 @@ class ExpenseHistorySection extends StatelessWidget {
             style: theme.textTheme.muted,
           )
         else
-          for (final expense in sortedExpenses) ...[
-            _ExpenseHistoryTile(expense: expense, currentUser: currentUser),
-            const SizedBox(height: AppSpacing.md),
-          ],
+          StaggeredRevealItems(
+            animation: animationController,
+            spacing: AppSpacing.md,
+            children: [
+              for (final expense in sortedExpenses)
+                _ExpenseHistoryTile(
+                  expense: expense,
+                  currentUser: widget.currentUser,
+                ),
+            ],
+          ),
       ],
     );
   }
