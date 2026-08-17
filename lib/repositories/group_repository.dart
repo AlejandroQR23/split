@@ -1,7 +1,7 @@
 import 'package:split/data/mock_groups.dart';
 import 'package:split/models/group.dart';
 
-final delayDuration = const Duration(seconds: 3);
+final delayDuration = const Duration(seconds: 2);
 
 abstract class GroupRepository {
   Future<List<Group>> fetchGroups();
