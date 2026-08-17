@@ -63,5 +63,5 @@ smallest input that would expose a rounding bug in an uneven split?
 
 ## Checklist
 
-- [ ] 5.1 Algoritmo de simplificación de deudas
-- [ ] 5.2 Tests unitarios del algoritmo
+- [x] 5.1 Algoritmo de simplificación de deudas
+- [x] 5.2 Tests unitarios del algoritmo

@@ -44,4 +44,4 @@ reveal actually require?
 
 ## Checklist
 
-- [ ] 6.1 Pantalla de balance
+- [x] 6.1 Pantalla de balance
