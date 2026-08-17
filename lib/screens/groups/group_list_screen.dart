@@ -37,7 +37,9 @@ class GroupListScreen extends ConsumerWidget {
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: AppSpacing.lg),
                 itemBuilder: (context, index) {
-                  return _GroupCard(group: data.value[index]);
+                  return _GroupCard(
+                    group: data.value[index],
+                  ).animate(delay: (120 * index).ms).fade(duration: 300.ms);
                 },
               ),
             ),

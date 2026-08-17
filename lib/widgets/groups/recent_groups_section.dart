@@ -21,6 +21,26 @@ class RecentGroupsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
 
+    final List<Widget> groupRows = [];
+    for (var i = 0; i < groups.length; i += 2) {
+      final group1 = groups[i];
+      final group2 = i + 1 < groups.length ? groups[i + 1] : null;
+
+      groupRows.add(
+        Row(
+          children: [
+            Expanded(child: _RecentGroupTile(group: group1)),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: group2 != null
+                  ? _RecentGroupTile(group: group2)
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,20 +58,12 @@ class RecentGroupsSection extends StatelessWidget {
         if (groups.isEmpty)
           Text('No active groups yet.', style: theme.textTheme.muted)
         else
-          for (var i = 0; i < groups.length; i += 2) ...[
-            Row(
-              children: [
-                Expanded(child: _RecentGroupTile(group: groups[i])),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: i + 1 < groups.length
-                      ? _RecentGroupTile(group: groups[i + 1])
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            ),
-            if (i + 2 < groups.length) const SizedBox(height: AppSpacing.md),
-          ],
+          Column(
+            spacing: AppSpacing.md,
+            children: groupRows
+                .animate(interval: 120.ms)
+                .fade(duration: 300.ms),
+          ),
       ],
     );
   }
