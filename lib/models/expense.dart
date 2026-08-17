@@ -32,4 +32,13 @@ class Expense {
   final Member paidBy;
   final List<ExpenseShare> shares;
   final DateTime date;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Expense && other.id == id && other.groupId == groupId;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, groupId);
 }
