@@ -43,7 +43,10 @@ final mockExpenses = <Expense>[
     concept: 'Groceries',
     amount: 45,
     paidBy: mockGroups[1].members[0], // Marcus
-    shares: [ExpenseShare(member: currentUser, amount: 22.5)],
+    shares: [
+      ExpenseShare(member: mockGroups[1].members[0], amount: 22.5), // Marcus
+      ExpenseShare(member: currentUser, amount: 22.5),
+    ],
     date: DateTime(2026, 7, 1),
   ),
 
