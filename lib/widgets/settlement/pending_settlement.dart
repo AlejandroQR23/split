@@ -1,17 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:split/widgets/animations/reveal_animation_state.dart';
+import 'package:split/widgets/animations/staggered_reveal_items.dart';
 
+import '../../models/member.dart';
+import '../../models/transfer.dart';
 import '../../theme/app_spacing.dart';
-import 'settlement_card.dart';
+import 'transfer_card.dart';
 
-class PendingSettlementsSection extends StatelessWidget {
-  const PendingSettlementsSection({super.key, required this.settlements});
+class PendingSettlementsSection extends StatefulWidget {
+  const PendingSettlementsSection({
+    super.key,
+    required this.transfers,
+    required this.currentUser,
+    required this.members,
+  });
 
-  final List<Settlement> settlements;
+  final List<Transfer> transfers;
+  final Member currentUser;
+  final List<Member> members;
+
+  @override
+  State<PendingSettlementsSection> createState() =>
+      _PendingSettlementsSectionState();
+}
+
+class _PendingSettlementsSectionState
+    extends RevealAnimationState<PendingSettlementsSection, Transfer> {
+  @override
+  List<Transfer> getItems(PendingSettlementsSection widget) => widget.transfers;
 
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
+    final memberById = {for (final member in widget.members) member.id: member};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,21 +44,29 @@ class PendingSettlementsSection extends StatelessWidget {
             Text('Pending settlements', style: theme.textTheme.h4),
             ShadBadge.secondary(
               child: Text(
-                settlements.isEmpty
+                widget.transfers.isEmpty
                     ? 'All settled'
-                    : '${settlements.length} pending',
+                    : '${widget.transfers.length} pending',
               ),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
-        if (settlements.isEmpty)
+        if (widget.transfers.isEmpty)
           const _EmptySettlementsState()
         else
-          for (final settlement in settlements) ...[
-            SettlementCard(settlement: settlement),
-            const SizedBox(height: AppSpacing.md),
-          ],
+          StaggeredRevealItems(
+            animation: animationController,
+            spacing: AppSpacing.md,
+            children: [
+              for (final transfer in widget.transfers)
+                TransferCard(
+                  transfer: transfer,
+                  currentUser: widget.currentUser,
+                  memberById: memberById,
+                ),
+            ],
+          ),
       ],
     );
   }
