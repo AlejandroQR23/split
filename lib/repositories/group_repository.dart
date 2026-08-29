@@ -1,42 +1,60 @@
-import 'package:split/data/mock_groups.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 import 'package:split/models/group.dart';
 
 final delayDuration = const Duration(seconds: 2);
 
 abstract class GroupRepository {
   Future<List<Group>> fetchGroups();
-  Future<void> addGroup(Group group);
+  Future<List<Group>> fetchRecentGroups({required int limit});
+  Future<void> addGroup(CreateGroupInput group);
   Future<void> removeGroup(String groupId);
   Future<void> updateGroup(Group updatedGroup);
 }
 
 class GroupRepositoryImpl implements GroupRepository {
-  final List<Group> _groups = List.of(mockGroups);
+  final http.Client _client;
+  final String _userId;
+
+  GroupRepositoryImpl(this._client, this._userId);
 
   @override
   Future<List<Group>> fetchGroups() async {
-    await Future.delayed(delayDuration);
-    return List.of(_groups);
+    final response = await _client.get(Uri.parse('groups'));
+    final data = jsonDecode(response.body)['groups'] as List<dynamic>;
+
+    return data.map((group) => Group.fromJson(group)).toList();
   }
 
   @override
-  Future<void> addGroup(Group group) async {
-    await Future.delayed(delayDuration);
-    _groups.add(group);
+  Future<List<Group>> fetchRecentGroups({required int limit}) async {
+    final response = await _client.get(
+      Uri.parse(
+        'members/$_userId/groups',
+      ).replace(queryParameters: {'limit': limit.toString()}),
+    );
+    final data = jsonDecode(response.body)['groups'] as List<dynamic>;
+
+    return data.map((group) => Group.fromJson(group)).toList();
+  }
+
+  @override
+  Future<void> addGroup(CreateGroupInput group) async {
+    await _client.post(Uri.parse('groups'), body: jsonEncode(group.toJson()));
   }
 
   @override
   Future<void> removeGroup(String groupId) async {
-    await Future.delayed(delayDuration);
-    _groups.removeWhere((group) => group.id == groupId);
+    await _client.delete(Uri.parse('groups/$groupId'));
   }
 
   @override
   Future<void> updateGroup(Group updatedGroup) async {
-    await Future.delayed(delayDuration);
-    final index = _groups.indexWhere((group) => group.id == updatedGroup.id);
-    if (index != -1) {
-      _groups[index] = updatedGroup;
-    }
+    await _client.patch(
+      Uri.parse('groups/${updatedGroup.id}'),
+      body: jsonEncode({'name': updatedGroup.name}),
+    );
   }
 }
