@@ -16,4 +16,12 @@ class Settlement {
   final Member member;
   final double netAmount;
   final String summary;
+
+  factory Settlement.fromJson(Map<String, dynamic> json) {
+    return Settlement(
+      member: Member.fromJson(json['counterparty'] as Map<String, dynamic>),
+      netAmount: (json['netAmount'] as num).toDouble(),
+      summary: json['summary'] as String,
+    );
+  }
 }
