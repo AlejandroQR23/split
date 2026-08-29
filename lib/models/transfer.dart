@@ -19,4 +19,12 @@ class Transfer {
 
   @override
   int get hashCode => Object.hash(from, to, amount);
+
+  factory Transfer.fromJson(Map<String, dynamic> json) {
+    return Transfer(
+      from: json['from'] as String,
+      to: json['to'] as String,
+      amount: (json['amount'] as num).toDouble(),
+    );
+  }
 }
