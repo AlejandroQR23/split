@@ -1,7 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/expense.dart';
 import 'package:split/models/member.dart';
+import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/http_provider.dart';
 import 'package:split/repositories/expense_repository.dart';
+
+const _recentActivityLimit = 3;
 
 class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
   ExpensesNotifier(this.groupId);
@@ -26,9 +30,8 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     }
   }
 
-  /// Builds an even-split [Expense] from the raw selections made on the
-  /// add-expense form and saves it — the screen hands over what the user
-  /// picked, not a constructed [Expense].
+  /// Builds an even-split [CreateExpenseInput] from the raw selections made on the
+  /// add-expense form and saves it.
   ///
   /// Splits in whole cents so shares always sum to exactly [amount] (a
   /// naive `amount / count` division leaves floating-point drift, e.g.
@@ -48,16 +51,14 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     final payerIndex = splitBetween.indexWhere((m) => m.id == paidBy.id);
     final remainderIndex = payerIndex != -1 ? payerIndex : 0;
 
-    final expense = Expense(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      groupId: groupId,
+    final expense = CreateExpenseInput(
       concept: concept,
       amount: amount,
-      paidBy: paidBy,
+      paidById: paidBy.id,
       shares: [
         for (var i = 0; i < splitCount; i++)
-          ExpenseShare(
-            member: splitBetween[i],
+          ExpenseShareInput(
+            memberId: splitBetween[i].id,
             amount:
                 (baseCents + (i == remainderIndex ? remainderCents : 0)) / 100,
           ),
@@ -65,7 +66,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       date: DateTime.now(),
     );
     await _mutateAndRefresh(
-      () => ref.read(expenseRepositoryProvider).addExpense(expense),
+      () => ref.read(expenseRepositoryProvider).addExpense(expense, groupId),
     );
   }
 
@@ -83,7 +84,10 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 }
 
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  return ExpenseRepositoryImpl();
+  final client = ref.watch(httpClientProvider);
+  final user = ref.watch(currentUserProvider);
+
+  return ExpenseRepositoryImpl(client, user.id);
 });
 
 final expensesProvider =
@@ -94,7 +98,9 @@ final expensesProvider =
 class AllExpensesNotifier extends AsyncNotifier<List<Expense>> {
   @override
   Future<List<Expense>> build() {
-    return ref.watch(expenseRepositoryProvider).fetchExpenses();
+    return ref
+        .watch(expenseRepositoryProvider)
+        .fetchExpenses(limit: _recentActivityLimit);
   }
 }
 
