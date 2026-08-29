@@ -30,6 +30,9 @@ everything from Phase 0 onward; nothing is assumed pre-existing.
 - **flutter_animate** — [pub.dev](https://pub.dev/packages/flutter_animate)
 - **image_picker** — [pub.dev](https://pub.dev/packages/image_picker)
 - **flutter_test** — [official docs](https://api.flutter.dev/flutter/flutter_test/flutter_test-library.html)
+- **http** — [pub.dev](https://pub.dev/packages/http)
+- **shared_preferences** — [pub.dev](https://pub.dev/packages/shared_preferences)
+- **firebase_auth** / **firebase_core** — [docs](https://firebase.google.com/docs/auth/flutter/start)
 
 ## Concept graph
 
@@ -57,6 +60,11 @@ phase breakdown below is derived from — don't re-derive it per phase.
 | 16 | Implicit/explicit Flutter animations | 2, 3 | [docs](https://docs.flutter.dev/ui/animations) |
 | 17 | `flutter_animate` effect chains | 16 | [docs](https://pub.dev/packages/flutter_animate) |
 | 18 | Custom page transitions & loading skeletons | 10, 17 | [docs](https://pub.dev/packages/go_router) |
+| 19 | HTTP client & REST integration | 9, 13 | [docs](https://pub.dev/packages/http) |
+| 20 | Mapping API errors to typed domain exceptions | 19 | [docs](https://pub.dev/packages/http) |
+| 21 | Local key-value persistence (`shared_preferences`) | 1 | [docs](https://pub.dev/packages/shared_preferences) |
+| 22 | Third-party auth SDK integration (sign-up/sign-in/session) | 13 | [docs](https://firebase.google.com/docs/auth/flutter/start) |
+| 23 | Auth state as a Riverpod provider & route guarding | 6, 7, 10, 22 | [docs](https://riverpod.dev/docs/concepts2/providers) |
 
 ## Phases
 
@@ -70,3 +78,5 @@ phase breakdown below is derived from — don't re-derive it per phase.
 | 5 | Algorithm & testing | 14, 15 | [phase-5.md](phase-5.md) |
 | 6 | Balance screen & animation fundamentals | 16 | [phase-6.md](phase-6.md) |
 | 7 | Polish: `flutter_animate` & transitions | 17, 18 | [phase-7.md](phase-7.md) |
+| 8 | Real backend integration | 19, 20, 21 | [phase-8.md](phase-8.md) |
+| 9 | Authentication (Firebase Auth) | 22, 23 | [phase-9.md](phase-9.md) |

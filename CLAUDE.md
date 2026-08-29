@@ -48,6 +48,8 @@ this app is being built against. It defines:
 | 5     | Algorithm & testing                     | [phase-5.md](curriculum/phase-5.md) |
 | 6     | Balance screen & animation fundamentals | [phase-6.md](curriculum/phase-6.md) |
 | 7     | Polish: `flutter_animate` & transitions | [phase-7.md](curriculum/phase-7.md) |
+| 8     | Real backend integration                | [phase-8.md](curriculum/phase-8.md) |
+| 9     | Authentication (Firebase Auth)          | [phase-9.md](curriculum/phase-9.md) |
 
 Each phase file has a checklist (`- [ ]` / `- [x]`) tracking what's actually
 been implemented — **check the relevant phase file's checklist before
