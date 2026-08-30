@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/expense.dart';
 import 'package:split/models/member.dart';
 import 'package:split/providers/current_user_provider.dart';
 import 'package:split/providers/http_provider.dart';
+import 'package:split/providers/settlement_provider.dart';
+import 'package:split/providers/transfer_provider.dart';
 import 'package:split/repositories/expense_repository.dart';
 
 const _recentActivityLimit = 3;
+const _refetchInterval = Duration(seconds: 30);
 
 class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
   ExpensesNotifier(this.groupId);
@@ -14,6 +19,13 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
   @override
   Future<List<Expense>> build() {
+    final timer = Timer.periodic(_refetchInterval, (_) {
+      ref.invalidateSelf();
+      _invalidateExpensesRelated();
+    });
+
+    ref.onDispose(timer.cancel);
+
     return ref.watch(expenseRepositoryProvider).fetchExpensesForGroup(groupId);
   }
 
@@ -23,11 +35,18 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       final repository = ref.read(expenseRepositoryProvider);
       await mutation();
       state = AsyncData(await repository.fetchExpensesForGroup(groupId));
-      ref.invalidate(allExpensesProvider);
+      _invalidateExpensesRelated();
     } catch (error, stackTrace) {
       state = previous.hasValue ? previous : AsyncError(error, stackTrace);
       rethrow;
     }
+  }
+
+  void _invalidateExpensesRelated() {
+    ref.invalidate(allExpensesProvider);
+    ref.invalidate(allSettlementsProvider);
+    ref.invalidate(groupSettlementsProvider(groupId));
+    ref.invalidate(groupTransfersProvider(groupId));
   }
 
   /// Builds an even-split [CreateExpenseInput] from the raw selections made on the
@@ -91,9 +110,10 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
 });
 
 final expensesProvider =
-    AsyncNotifierProvider.family<ExpensesNotifier, List<Expense>, String>(
-      (groupId) => ExpensesNotifier(groupId),
-    );
+    AsyncNotifierProvider.autoDispose
+        .family<ExpensesNotifier, List<Expense>, String>(
+          (groupId) => ExpensesNotifier(groupId),
+        );
 
 class AllExpensesNotifier extends AsyncNotifier<List<Expense>> {
   @override

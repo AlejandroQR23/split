@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:split/models/expense.dart';
 
-final delayDuration = const Duration(seconds: 2);
-
 abstract class ExpenseRepository {
   Future<List<Expense>> fetchExpenses({int? limit});
   Future<List<Expense>> fetchExpensesForGroup(String groupId);
