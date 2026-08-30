@@ -20,6 +20,9 @@ class Group {
         )
         .toList(),
   );
+
+  Group copyWith({String? name, List<Member>? members}) =>
+      Group(id: id, name: name ?? this.name, members: members ?? this.members);
 }
 
 class CreateGroupInput {
