@@ -26,6 +26,18 @@ abstract class AppTheme {
     colorScheme: AppColors.lightScheme,
     textTheme: AppTypography.textTheme,
     radius: BorderRadius.circular(AppRadii.md),
+    // shadcn_ui's own default theme draws a focused input's outer ring at
+    // `radius.add(radius / 2)` (1.5x) — at our radius that reads as visibly
+    // more rounded than the input itself. Match it to the input's own
+    // radius instead so the ring hugs the same shape.
+    decoration: ShadDecoration(
+      secondaryFocusedBorder: ShadBorder.all(
+        width: 2,
+        color: AppColors.primary,
+        radius: BorderRadius.circular(AppRadii.md),
+        offset: 4,
+      ),
+    ),
     primaryButtonTheme: ShadButtonTheme(
       backgroundColor: AppColors.primary,
       hoverBackgroundColor: AppColors.primaryDark,
@@ -51,6 +63,24 @@ abstract class AppTheme {
       backgroundColor: AppColors.background,
       radius: BorderRadius.circular(AppRadii.lg),
       shadows: AppShadows.card,
+    ),
+    // Fully pill-shaped, like every button — shadcn_ui's own default theme
+    // otherwise hardcodes the active-tab indicator to a 4px radius while the
+    // track uses the app-wide radius, which visibly mismatches.
+    tabsTheme: ShadTabsTheme(
+      decoration: ShadDecoration(
+        color: AppColors.surface,
+        border: ShadBorder.all(
+          radius: BorderRadius.circular(AppRadii.pill),
+          width: 0,
+        ),
+      ),
+      tabDecoration: ShadDecoration(
+        border: ShadBorder.all(
+          radius: BorderRadius.circular(AppRadii.pill),
+          width: 0,
+        ),
+      ),
     ),
   );
 }
