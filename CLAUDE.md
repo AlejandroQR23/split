@@ -58,6 +58,12 @@ phase; don't jump ahead to a later phase's concepts (e.g. don't wire
 `go_router` navigation before Phase 3, don't add the settle-up algorithm
 before Phase 5) unless the user explicitly asks for it.
 
+## Error handling
+
+- Fetch errors: display via
+  [`AsyncErrorText`](lib/widgets/shared/async_error_text.dart).
+- Mutation errors (create, delete, update): display via a Shadcn `ShadToast`.
+
 ## Working in this repo
 
 - `flutter analyze` — must be clean before considering work done.
