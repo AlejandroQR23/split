@@ -7,4 +7,7 @@ class Member {
 
   final String id;
   final String name;
+
+  factory Member.fromJson(Map<String, dynamic> json) =>
+      Member(id: json['id'] as String, name: json['name'] as String);
 }
