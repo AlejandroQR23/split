@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'screens/expenses/add_expense_screen.dart';
+import 'screens/groups/create_group_screen.dart';
+import 'screens/groups/edit_group_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -26,6 +28,17 @@ final _router = GoRouter(
       builder: (context, state) {
         return AddExpenseScreen(groupId: state.uri.queryParameters['groupId']);
       },
+    ),
+    GoRoute(
+      path: '/groups/new',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CreateGroupScreen(),
+    ),
+    GoRoute(
+      path: '/groups/group/:groupId/edit',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) =>
+          EditGroupScreen(groupId: state.pathParameters['groupId']!),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
