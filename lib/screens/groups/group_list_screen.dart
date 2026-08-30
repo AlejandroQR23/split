@@ -20,44 +20,61 @@ class GroupListScreen extends ConsumerWidget {
 
     final theme = ShadTheme.of(context);
 
-    return switch (groupsResponse) {
-      AsyncData<List<Group>> data => DecoratedBox(
-        decoration: const BoxDecoration(color: AppColors.background),
-        child: Column(
-          children: [
-            ScreenHeader(title: 'Your groups', isMainScreen: true),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.only(
-                  left: AppSpacing.xl,
-                  right: AppSpacing.xl,
-                  bottom: AppSpacing.xxl,
+    return DecoratedBox(
+      decoration: const BoxDecoration(color: AppColors.background),
+      child: Column(
+        children: [
+          ScreenHeader(
+            title: 'Your groups',
+            isMainScreen: true,
+            trailing: ShadIconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () => context.push('/groups/new'),
+            ),
+          ),
+          Expanded(
+            child: groupsResponse.when(
+              data: (groups) {
+                if (groups.isEmpty) {
+                  return Center(
+                    child: Text('No groups yet.', style: theme.textTheme.muted),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.xl,
+                    right: AppSpacing.xl,
+                    bottom: AppSpacing.xxl,
+                  ),
+                  itemCount: groups.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: AppSpacing.lg),
+                  itemBuilder: (context, index) {
+                    return _GroupCard(
+                      group: groups[index],
+                    ).animate(delay: (120 * index).ms).fade(duration: 300.ms);
+                  },
+                );
+              },
+              error: (error, stackTrace) => Center(
+                child: Text(
+                  'Error: $error',
+                  style: theme.textTheme.p.copyWith(
+                    color: theme.colorScheme.destructive,
+                  ),
                 ),
-                itemCount: data.value.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: AppSpacing.lg),
-                itemBuilder: (context, index) {
-                  return _GroupCard(
-                    group: data.value[index],
-                  ).animate(delay: (120 * index).ms).fade(duration: 300.ms);
-                },
+              ),
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.primary,
+                ),
               ),
             ),
-          ],
-        ),
-      ),
-      AsyncLoading() => Center(
-        child: CircularProgressIndicator(color: theme.colorScheme.primary),
-      ),
-      AsyncError(error: final error) => Center(
-        child: Text(
-          'Error: $error',
-          style: theme.textTheme.p.copyWith(
-            color: theme.colorScheme.destructive,
           ),
-        ),
+        ],
       ),
-    };
+    );
   }
 }
 
