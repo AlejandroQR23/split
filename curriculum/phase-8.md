@@ -123,7 +123,7 @@ correct choice once balances are multi-user data?
 
 ## Checklist
 
-- [ ] 8.1 Repositorios reales sobre la API HTTP
-- [ ] 8.2 Manejo de errores de red
+- [x] 8.1 Repositorios reales sobre la API HTTP
+- [x] 8.2 Manejo de errores de red
 - [ ] 8.3 Identidad de arranque persistente
-- [ ] 8.4 Balances y settlements calculados por el servidor
+- [x] 8.4 Balances y settlements calculados por el servidor
