@@ -18,6 +18,7 @@ class GroupsNotifier extends AsyncNotifier<List<Group>> {
       final repository = ref.read(groupRepositoryProvider);
       await mutation();
       state = AsyncData(await repository.fetchGroups());
+      ref.invalidate(recentGroupsProvider);
     } catch (error, stackTrace) {
       state = previous.hasValue ? previous : AsyncError(error, stackTrace);
       rethrow;
@@ -36,10 +37,20 @@ class GroupsNotifier extends AsyncNotifier<List<Group>> {
     );
   }
 
-  Future<void> updateGroup(Group updatedGroup) async {
-    await _mutateAndRefresh(
-      () => ref.read(groupRepositoryProvider).updateGroup(updatedGroup),
-    );
+  Future<void> editGroup({
+    required Group group,
+    required String name,
+    required List<String> addedMemberIds,
+  }) async {
+    await _mutateAndRefresh(() async {
+      final repository = ref.read(groupRepositoryProvider);
+      if (name != group.name) {
+        await repository.updateGroup(group.copyWith(name: name));
+      }
+      for (final memberId in addedMemberIds) {
+        await repository.addMemberToGroup(group.id, memberId);
+      }
+    });
   }
 }
 

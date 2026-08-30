@@ -4,14 +4,13 @@ import 'package:http/http.dart' as http;
 
 import 'package:split/models/group.dart';
 
-final delayDuration = const Duration(seconds: 2);
-
 abstract class GroupRepository {
   Future<List<Group>> fetchGroups();
   Future<List<Group>> fetchRecentGroups({required int limit});
   Future<void> addGroup(CreateGroupInput group);
   Future<void> removeGroup(String groupId);
   Future<void> updateGroup(Group updatedGroup);
+  Future<void> addMemberToGroup(String groupId, String memberId);
 }
 
 class GroupRepositoryImpl implements GroupRepository {
@@ -55,6 +54,14 @@ class GroupRepositoryImpl implements GroupRepository {
     await _client.patch(
       Uri.parse('groups/${updatedGroup.id}'),
       body: jsonEncode({'name': updatedGroup.name}),
+    );
+  }
+
+  @override
+  Future<void> addMemberToGroup(String groupId, String memberId) async {
+    await _client.post(
+      Uri.parse('groups/$groupId/members'),
+      body: jsonEncode({'memberId': memberId}),
     );
   }
 }
