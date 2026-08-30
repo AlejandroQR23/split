@@ -8,11 +8,13 @@ import '/theme/app_typography.dart';
 class ScreenHeader extends StatelessWidget {
   final String title;
   final bool isMainScreen;
+  final Widget? trailing;
 
   const ScreenHeader({
     super.key,
     required this.title,
     this.isMainScreen = false,
+    this.trailing,
   });
 
   @override
@@ -26,26 +28,38 @@ class ScreenHeader extends StatelessWidget {
         left: AppSpacing.xl,
         right: AppSpacing.xl,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!isMainScreen)
-            ShadIconButton.ghost(
-              icon: Icon(Icons.arrow_back, color: theme.colorScheme.foreground),
-              onPressed: () => context.pop(),
+      child: isMainScreen
+          ? Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(title, style: AppTypography.screenTitle),
+                  ),
+                ),
+                ?trailing,
+              ],
+            )
+          : IntrinsicHeight(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ShadIconButton.ghost(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.colorScheme.foreground,
+                      ),
+                      onPressed: () => context.pop(),
+                    ),
+                  ),
+                  Text(title, style: AppTypography.textTheme.h4),
+                  if (trailing != null)
+                    Align(alignment: Alignment.centerRight, child: trailing),
+                ],
+              ),
             ),
-          SizedBox(height: !isMainScreen ? 8.0 : 0),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              title,
-              style: isMainScreen
-                  ? AppTypography.screenTitle
-                  : AppTypography.textTheme.h3,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
