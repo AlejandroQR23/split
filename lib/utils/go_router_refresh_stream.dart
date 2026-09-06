@@ -15,6 +15,10 @@ class GoRouterRefreshStream extends ChangeNotifier {
 
   late final StreamSubscription<dynamic> _subscription;
 
+  /// Triggers a redirect re-evaluation from a source other than the wrapped
+  /// stream — e.g. another provider changing outside of auth state.
+  void refresh() => notifyListeners();
+
   @override
   void dispose() {
     _subscription.cancel();
