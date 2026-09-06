@@ -13,6 +13,7 @@ abstract class AppColors {
 
   // Brand anchors ------------------------------------------------------
   static const primary = Color(0xFF4CB963);
+  static const secondary = Color(0xFFECB0E1);
   static const ink = Color(0xFF0C1618);
 
   // Primary ramp --------------------------------------------------------
@@ -23,6 +24,9 @@ abstract class AppColors {
 
   /// Light emerald surface: active nav pill, badges, selection highlight.
   static const primaryTint = Color(0xFFE8F6EC);
+
+  /// Light pink surface: active nav pill, badges, selection highlight.
+  static const secondaryTint = Color(0xFFFDE8F3);
 
   // Neutrals (tints of `ink` mixed with white) --------------------------
   static const background = Color(0xFFFFFFFF);
