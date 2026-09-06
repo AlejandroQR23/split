@@ -10,7 +10,11 @@ import 'package:split/repositories/auth_repository.dart';
 import 'package:split/utils/network_exception.dart';
 
 class _FakeAuthRepository implements AuthRepository {
-  _FakeAuthRepository({this.normalToken, this.refreshedToken, this.refreshError});
+  _FakeAuthRepository({
+    this.normalToken,
+    this.refreshedToken,
+    this.refreshError,
+  });
 
   String? normalToken;
   String? refreshedToken;
@@ -79,6 +83,41 @@ void main() {
     await client.get(Uri.parse('groups'));
 
     expect(capturedRequest!.headers['Authorization'], 'Bearer token-1');
+  });
+
+  test('omits Content-Type on a bodyless request — the server rejects '
+      'application/json with an empty body, which is every DELETE', () async {
+    final authRepository = _FakeAuthRepository(normalToken: 'token-1');
+    http.Request? capturedRequest;
+    final inner = MockClient((request) async {
+      capturedRequest = request;
+      return http.Response('', 204);
+    });
+    final client = HttpClient(inner, authRepository);
+
+    await client.delete(Uri.parse('expenses/exp_01h'));
+
+    expect(capturedRequest!.headers.containsKey('Content-Type'), isFalse);
+  });
+
+  test('sends Content-Type: application/json when there is a body', () async {
+    final authRepository = _FakeAuthRepository(normalToken: 'token-1');
+    http.Request? capturedRequest;
+    final inner = MockClient((request) async {
+      capturedRequest = request;
+      return http.Response('{}', 201);
+    });
+    final client = HttpClient(inner, authRepository);
+
+    await client.post(
+      Uri.parse('groups/grp_01h/payments'),
+      body: jsonEncode({'amount': 20.0}),
+    );
+
+    expect(
+      capturedRequest!.headers['Content-Type'],
+      contains('application/json'),
+    );
   });
 
   test(

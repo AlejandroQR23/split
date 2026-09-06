@@ -53,7 +53,10 @@ class HttpClient extends http.BaseClient {
     final token = await _authRepository.getIdToken(forceRefresh: forceRefresh);
 
     final request = http.Request(method, url)..bodyBytes = bodyBytes;
-    request.headers['Content-Type'] = 'application/json';
+
+    if (bodyBytes.isNotEmpty) {
+      request.headers['Content-Type'] = 'application/json';
+    }
     if (token != null) request.headers['Authorization'] = 'Bearer $token';
 
     final streamedResponse = await _inner.send(request);
@@ -72,7 +75,8 @@ class HttpClient extends http.BaseClient {
       forceRefresh: false,
     );
 
-    if (response.statusCode == 401 && _errorCode(response) == 'unauthenticated') {
+    if (response.statusCode == 401 &&
+        _errorCode(response) == 'unauthenticated') {
       try {
         response = await _attempt(
           request.method,
