@@ -62,53 +62,25 @@ class _CreateGroupScreenState extends GroupFormScreenState<CreateGroupScreen> {
     final form = GroupForm(
       formKey: formKey,
       memberControllers: memberControllers,
-      isSubmitting: isSubmitting,
       onAddMemberField: addMemberField,
       onRemoveMemberField: removeMemberField,
-      onSubmit: handleSubmit,
-      submitLabel: 'Create group',
       membersHint: "You're added automatically — invite others by name.",
-      showSubmitButton: false,
     );
 
     return buildScreen(
       title: widget.isFirstGroup ? 'Create your first group' : 'New group',
       showBackButton: !widget.isFirstGroup,
-      body: Column(
-        children: [
-          Expanded(child: form),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.xl,
-              0,
-              AppSpacing.xl,
-              AppSpacing.xl,
+      body: buildFormWithPinnedSubmit(
+        form: form,
+        submitLabel: 'Create group',
+        extraFooterActions: [
+          if (widget.isFirstGroup) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ShadButton.ghost(
+              onPressed: () => context.go('/'),
+              child: const Text('Skip for now'),
             ),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ShadButton(
-                    onPressed: isSubmitting ? null : handleSubmit,
-                    child: isSubmitting
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Create group'),
-                  ),
-                ),
-                if (widget.isFirstGroup) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  ShadButton.ghost(
-                    onPressed: () => context.go('/'),
-                    child: const Text('Skip for now'),
-                  ),
-                ],
-              ],
-            ),
-          ),
+          ],
         ],
       ),
     );

@@ -66,17 +66,17 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
             return const AsyncErrorText(error: 'Group not found');
           }
 
-          return GroupForm(
-            formKey: formKey,
-            memberControllers: memberControllers,
-            isSubmitting: isSubmitting,
-            onAddMemberField: addMemberField,
-            onRemoveMemberField: removeMemberField,
-            onSubmit: handleSubmit,
+          return buildFormWithPinnedSubmit(
+            form: GroupForm(
+              formKey: formKey,
+              memberControllers: memberControllers,
+              onAddMemberField: addMemberField,
+              onRemoveMemberField: removeMemberField,
+              membersHint: 'Invite more people by name.',
+              initialName: group.name,
+              existingMembers: group.members,
+            ),
             submitLabel: 'Save changes',
-            membersHint: 'Invite more people by name.',
-            initialName: group.name,
-            existingMembers: group.members,
           );
         },
       ),

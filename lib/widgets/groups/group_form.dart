@@ -14,11 +14,8 @@ class GroupForm extends StatelessWidget {
     super.key,
     required this.formKey,
     required this.memberControllers,
-    required this.isSubmitting,
     required this.onAddMemberField,
     required this.onRemoveMemberField,
-    required this.onSubmit,
-    required this.submitLabel,
     required this.membersHint,
     this.initialName,
     this.existingMembers = const [],
@@ -26,11 +23,8 @@ class GroupForm extends StatelessWidget {
 
   final GlobalKey<ShadFormState> formKey;
   final List<TextEditingController> memberControllers;
-  final bool isSubmitting;
   final VoidCallback onAddMemberField;
   final ValueChanged<int> onRemoveMemberField;
-  final VoidCallback onSubmit;
-  final String submitLabel;
   final String membersHint;
   final String? initialName;
   final List<Member> existingMembers;
@@ -110,23 +104,6 @@ class GroupForm extends StatelessWidget {
         ShadButton.outline(
           onPressed: onAddMemberField,
           child: const Text('Add another member'),
-        ),
-        const SizedBox(height: AppSpacing.xl),
-        SizedBox(
-          width: double.infinity,
-          child: ShadButton(
-            onPressed: isSubmitting ? null : onSubmit,
-            child: isSubmitting
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: theme.colorScheme.primaryForeground,
-                    ),
-                  )
-                : Text(submitLabel),
-          ),
         ),
       ],
     );
