@@ -12,6 +12,7 @@ class ScreenScaffold extends StatelessWidget {
   static const List<FloatingNavItem> items = [
     FloatingNavItem(icon: LucideIcons.house, label: 'Home'),
     FloatingNavItem(icon: LucideIcons.users, label: 'Groups'),
+    FloatingNavItem(icon: LucideIcons.user, label: 'Profile'),
   ];
 
   void onTap(int index) {
