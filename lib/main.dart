@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'firebase_options.dart';
+import 'models/member.dart';
 import 'providers/auth_provider.dart';
+import 'providers/current_member_provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/expenses/add_expense_screen.dart';
 import 'screens/groups/create_group_screen.dart';
@@ -14,6 +16,9 @@ import 'screens/groups/edit_group_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/onboarding/set_name_screen.dart';
+import 'screens/splash/member_provisioning_error_screen.dart';
+import 'screens/splash/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'utils/auth_redirect.dart';
 import 'utils/go_router_refresh_stream.dart';
@@ -26,12 +31,14 @@ final GlobalKey<NavigatorState> _groupsShellNavigatorKey =
     GlobalKey<NavigatorState>();
 
 const _authRoutes = {'/sign-in', '/sign-up'};
+const _onboardingNameRoute = '/onboarding/name';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshStream = GoRouterRefreshStream(
     ref.watch(authRepositoryProvider).authStateChanges(),
   );
   ref.onDispose(refreshStream.dispose);
+  ref.listen(currentMemberProvider, (_, _) => refreshStream.refresh());
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -39,9 +46,13 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isSignedIn = ref.read(authRepositoryProvider).currentUser != null;
       final isAuthRoute = _authRoutes.contains(state.matchedLocation);
+      final member = ref.read(currentMemberProvider).value;
+      final needsName = member != null && member.name == Member.placeholderName;
       return resolveAuthRedirect(
         isSignedIn: isSignedIn,
         isAuthRoute: isAuthRoute,
+        needsName: needsName,
+        isOnboardingNameRoute: state.matchedLocation == _onboardingNameRoute,
       );
     },
     routes: [
@@ -56,6 +67,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) =>
             const AuthScreen(initialMode: AuthMode.signUp),
+      ),
+      GoRoute(
+        path: _onboardingNameRoute,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SetNameScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/group',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) =>
+            const CreateGroupScreen(isFirstGroup: true),
       ),
       GoRoute(
         path: '/add-expense',
@@ -85,7 +107,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             navigatorKey: _homeShellNavigatorKey,
             routes: [
-              GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const HomeScreen(),
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -129,13 +154,22 @@ class MyApp extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     if (authState.isLoading) {
-      return ShadApp(
-        title: 'Split',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        themeMode: ThemeMode.light,
-        home: const _SplashScreen(),
-      );
+      return _shadApp(home: const SplashScreen());
+    }
+
+    if (authState.value != null) {
+      final member = ref.watch(currentMemberProvider);
+
+      if (!member.hasValue) {
+        if (member.hasError) {
+          return _shadApp(
+            home: MemberProvisioningErrorScreen(
+              onRetry: () => ref.invalidate(currentMemberProvider),
+            ),
+          );
+        }
+        return _shadApp(home: const SplashScreen());
+      }
     }
 
     return ShadApp.router(
@@ -146,19 +180,14 @@ class MyApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
     );
   }
-}
 
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
-    return ColoredBox(
-      color: theme.colorScheme.background,
-      child: Center(
-        child: CircularProgressIndicator(color: theme.colorScheme.primary),
-      ),
+  ShadApp _shadApp({required Widget home}) {
+    return ShadApp(
+      title: 'Split',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      themeMode: ThemeMode.light,
+      home: home,
     );
   }
 }
