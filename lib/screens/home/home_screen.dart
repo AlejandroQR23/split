@@ -15,7 +15,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(requireCurrentMemberProvider);
+    final currentUser = ref.watch(currentMemberProvider).value;
+    if (currentUser == null) return const SizedBox.shrink();
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: AppColors.background),

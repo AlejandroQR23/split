@@ -29,7 +29,8 @@ class GroupDetailsScreen extends ConsumerWidget {
     final groupsResponse = ref.watch(groupsProvider);
     final expensesResponse = ref.watch(expensesProvider(groupId));
     final transfersResponse = ref.watch(groupTransfersProvider(groupId));
-    final currentUser = ref.watch(requireCurrentMemberProvider);
+    final currentUser = ref.watch(currentMemberProvider).value;
+    if (currentUser == null) return const SizedBox.shrink();
 
     final theme = ShadTheme.of(context);
     final loading = Center(

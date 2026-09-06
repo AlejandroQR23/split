@@ -16,8 +16,10 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ShadTheme.of(context);
-    final member = ref.watch(requireCurrentMemberProvider);
+    final member = ref.watch(currentMemberProvider).value;
     final email = ref.watch(authStateProvider).value?.email ?? '';
+
+    if (member == null) return const SizedBox.shrink();
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: AppColors.background),
@@ -59,8 +61,7 @@ class ProfileScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ShadButton.ghost(
                     leading: const Icon(LucideIcons.logOut),
-                    onPressed: () =>
-                        ref.read(authRepositoryProvider).signOut(),
+                    onPressed: () => ref.read(authRepositoryProvider).signOut(),
                     child: const Text('Sign Out'),
                   ),
                 ),

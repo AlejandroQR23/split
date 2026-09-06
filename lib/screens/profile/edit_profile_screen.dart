@@ -13,7 +13,8 @@ class EditProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final member = ref.watch(requireCurrentMemberProvider);
+    final member = ref.watch(currentMemberProvider).value;
+    if (member == null) return const SizedBox.shrink();
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: AppColors.background),
@@ -23,9 +24,7 @@ class EditProfileScreen extends ConsumerWidget {
             const ScreenHeader(title: 'Edit Profile'),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 children: [
                   NameForm(
                     initialName: member.name,
