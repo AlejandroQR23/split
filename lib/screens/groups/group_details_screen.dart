@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
@@ -105,7 +106,7 @@ class _GroupDetailsContent extends StatelessWidget {
           ScreenHeader(
             title: group.name,
             trailing: ShadIconButton.ghost(
-              icon: const Icon(Icons.edit_outlined),
+              icon: const HugeIcon(icon: HugeIcons.strokeRoundedPen01),
               onPressed: () => context.push('/groups/group/${group.id}/edit'),
             ),
           ),

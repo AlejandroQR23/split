@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/groups_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +29,7 @@ class GroupListScreen extends ConsumerWidget {
             title: 'Your groups',
             isMainScreen: true,
             trailing: ShadIconButton(
-              icon: const Icon(Icons.add),
+              icon: const HugeIcon(icon: HugeIcons.strokeRoundedPlusSign),
               onPressed: () => context.push('/groups/new'),
             ),
           ),

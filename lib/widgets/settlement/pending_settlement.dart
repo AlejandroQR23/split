@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/widgets/animations/reveal_animation_state.dart';
 import 'package:split/widgets/animations/staggered_reveal_items.dart';
@@ -86,8 +87,8 @@ class _EmptySettlementsState extends StatelessWidget {
       columnCrossAxisAlignment: CrossAxisAlignment.center,
       child: Column(
         children: [
-          Icon(
-            LucideIcons.badgeCheck,
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedCheckmarkBadge01,
             color: theme.colorScheme.primary,
             size: 32,
           ),

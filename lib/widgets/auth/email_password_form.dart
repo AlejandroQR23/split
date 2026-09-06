@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../theme/app_spacing.dart';
@@ -80,8 +81,10 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
                     child: ShadIconButton.ghost(
                       iconSize: 20,
                       padding: const EdgeInsets.all(2),
-                      icon: Icon(
-                        _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
+                      icon: HugeIcon(
+                        icon: _obscurePassword
+                            ? HugeIcons.strokeRoundedViewOff
+                            : HugeIcons.strokeRoundedView,
                         color: theme.colorScheme.mutedForeground,
                       ),
                       onPressed: () {

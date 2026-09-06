@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:go_router/go_router.dart';
 
@@ -50,8 +51,8 @@ class ScreenHeader extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: ShadIconButton.ghost(
-                        icon: Icon(
-                          Icons.arrow_back,
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedArrowLeft01,
                           color: theme.colorScheme.foreground,
                         ),
                         onPressed: () => context.pop(),

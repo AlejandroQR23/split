@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '/widgets/navigation/floating_nav_bar.dart';
 
@@ -10,9 +10,9 @@ class ScreenScaffold extends StatelessWidget {
   const ScreenScaffold({super.key, required this.child});
 
   static const List<FloatingNavItem> items = [
-    FloatingNavItem(icon: LucideIcons.house, label: 'Home'),
-    FloatingNavItem(icon: LucideIcons.users, label: 'Groups'),
-    FloatingNavItem(icon: LucideIcons.user, label: 'Profile'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedHome01, label: 'Home'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedUserGroup, label: 'Groups'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedUser, label: 'Profile'),
   ];
 
   void onTap(int index) {

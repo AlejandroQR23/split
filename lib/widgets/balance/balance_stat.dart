@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/settlement_provider.dart';
 
@@ -80,7 +81,10 @@ class BalanceSummaryCard extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ShadButton(
-                    leading: const Icon(LucideIcons.plus, size: 16),
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedPlusSign,
+                      size: 16,
+                    ),
                     onPressed: onAddExpense,
                     child: const Text('Add expense'),
                   ),

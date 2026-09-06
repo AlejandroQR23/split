@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -8,7 +9,7 @@ import '../../theme/app_typography.dart';
 class FloatingNavItem {
   const FloatingNavItem({required this.icon, required this.label});
 
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final String label;
 }
 
@@ -101,7 +102,7 @@ class _NavItem extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(item.icon, size: 22, color: color),
+            HugeIcon(icon: item.icon, size: 22, color: color),
             const SizedBox(width: AppSpacing.xs),
             Text(
               item.label,

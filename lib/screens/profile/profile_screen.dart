@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../providers/auth_provider.dart';
@@ -60,7 +61,9 @@ class ProfileScreen extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ShadButton.ghost(
-                    leading: const Icon(LucideIcons.logOut),
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedLogout01,
+                    ),
                     onPressed: () => ref.read(authRepositoryProvider).signOut(),
                     child: const Text('Sign Out'),
                   ),
@@ -88,6 +91,7 @@ class _InviteFriendsCard extends StatelessWidget {
       child: ShadCard(
         backgroundColor: AppColors.secondaryTint,
         border: ShadBorder.none,
+        shadows: const [],
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Row(
           children: [
@@ -104,7 +108,7 @@ class _InviteFriendsCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(LucideIcons.chevronRight),
+            const HugeIcon(icon: HugeIcons.strokeRoundedArrowRight01),
           ],
         ),
       ),

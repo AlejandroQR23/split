@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../models/member.dart';
@@ -92,8 +93,8 @@ class GroupForm extends StatelessWidget {
                 ),
                 if (memberControllers.length > 1)
                   ShadIconButton.ghost(
-                    icon: Icon(
-                      Icons.close,
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel01,
                       color: theme.colorScheme.mutedForeground,
                     ),
                     onPressed: () => onRemoveMemberField(i),

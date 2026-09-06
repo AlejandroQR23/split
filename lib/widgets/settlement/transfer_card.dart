@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../models/member.dart';
@@ -47,8 +48,8 @@ class TransferCard extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                child: Icon(
-                  LucideIcons.arrowRight,
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedArrowRight01,
                   size: 16,
                   color: theme.colorScheme.mutedForeground,
                 ),
