@@ -8,6 +8,7 @@ abstract class ExpenseRepository {
   Future<List<Expense>> fetchExpenses({int? limit});
   Future<List<Expense>> fetchExpensesForGroup(String groupId);
   Future<void> addExpense(CreateExpenseInput expense, String groupId);
+  Future<void> addPayment(CreatePaymentInput payment, String groupId);
   Future<void> removeExpense(String expenseId);
   Future<void> updateExpense(Expense updatedExpense);
 }
@@ -45,6 +46,14 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     await _client.post(
       Uri.parse('groups/$groupId/expenses'),
       body: jsonEncode(expense.toJson()),
+    );
+  }
+
+  @override
+  Future<void> addPayment(CreatePaymentInput payment, String groupId) async {
+    await _client.post(
+      Uri.parse('groups/$groupId/payments'),
+      body: jsonEncode(payment.toJson()),
     );
   }
 

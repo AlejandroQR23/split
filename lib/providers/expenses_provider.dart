@@ -95,6 +95,26 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     );
   }
 
+  /// Records that [fromMemberId] paid [toMemberId] back by [amount],
+  /// reducing the balance between them. Any positive amount is accepted —
+  /// partial payments and overpayments are both valid; the server doesn't
+  /// cap the amount at the current suggested transfer.
+  Future<void> settleUp({
+    required String fromMemberId,
+    required String toMemberId,
+    required double amount,
+  }) async {
+    final payment = CreatePaymentInput(
+      fromMemberId: fromMemberId,
+      toMemberId: toMemberId,
+      amount: amount,
+      date: DateTime.now(),
+    );
+    await _mutateAndRefresh(
+      () => ref.read(expenseRepositoryProvider)!.addPayment(payment, groupId),
+    );
+  }
+
   Future<void> removeExpense(String expenseId) async {
     await _mutateAndRefresh(
       () => ref.read(expenseRepositoryProvider)!.removeExpense(expenseId),
