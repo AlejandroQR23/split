@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/expense.dart';
 import 'package:split/models/member.dart';
-import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/providers/settlement_provider.dart';
 import 'package:split/providers/transfer_provider.dart';
@@ -31,6 +31,8 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
   Future<void> _mutateAndRefresh(Future<void> Function() mutation) async {
     final previous = state;
+
+    final keepAlive = ref.keepAlive();
     try {
       final repository = ref.read(expenseRepositoryProvider);
       await mutation();
@@ -39,6 +41,8 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     } catch (error, stackTrace) {
       state = previous.hasValue ? previous : AsyncError(error, stackTrace);
       rethrow;
+    } finally {
+      keepAlive.close();
     }
   }
 
@@ -104,16 +108,15 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
   final client = ref.watch(httpClientProvider);
-  final user = ref.watch(currentUserProvider);
+  final user = ref.watch(requireCurrentMemberProvider);
 
   return ExpenseRepositoryImpl(client, user.id);
 });
 
-final expensesProvider =
-    AsyncNotifierProvider.autoDispose
-        .family<ExpensesNotifier, List<Expense>, String>(
-          (groupId) => ExpensesNotifier(groupId),
-        );
+final expensesProvider = AsyncNotifierProvider.autoDispose
+    .family<ExpensesNotifier, List<Expense>, String>(
+      (groupId) => ExpensesNotifier(groupId),
+    );
 
 class AllExpensesNotifier extends AsyncNotifier<List<Expense>> {
   @override
