@@ -17,6 +17,8 @@ import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/onboarding/set_name_screen.dart';
+import 'screens/profile/edit_profile_screen.dart';
+import 'screens/profile/profile_screen.dart';
 import 'screens/splash/member_provisioning_error_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'theme/app_theme.dart';
@@ -28,6 +30,8 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _homeShellNavigatorKey =
     GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _groupsShellNavigatorKey =
+    GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _profileShellNavigatorKey =
     GlobalKey<NavigatorState>();
 
 const _authRoutes = {'/sign-in', '/sign-up'};
@@ -99,6 +103,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             EditGroupScreen(groupId: state.pathParameters['groupId']!),
       ),
+      GoRoute(
+        path: '/profile/edit',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ScreenScaffold(child: navigationShell);
@@ -131,6 +140,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          StatefulShellBranch(
+            navigatorKey: _profileShellNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
         ],
       ),
     ],
@@ -160,15 +178,15 @@ class MyApp extends ConsumerWidget {
     if (authState.value != null) {
       final member = ref.watch(currentMemberProvider);
 
-      if (!member.hasValue) {
-        if (member.hasError) {
-          return _shadApp(
-            home: MemberProvisioningErrorScreen(
-              onRetry: () => ref.invalidate(currentMemberProvider),
-            ),
-          );
-        }
+      if (member.isLoading) {
         return _shadApp(home: const SplashScreen());
+      }
+      if (member.hasError) {
+        return _shadApp(
+          home: MemberProvisioningErrorScreen(
+            onRetry: () => ref.invalidate(currentMemberProvider),
+          ),
+        );
       }
     }
 
