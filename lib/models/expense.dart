@@ -16,8 +16,25 @@ class ExpenseShare {
   );
 }
 
+/// Whether an [Expense] is a regular shared expense or a settle-up payment
+/// recorded between two members.
+enum ExpenseType {
+  expense,
+  payment;
+
+  /// Unknown or absent values degrade to [expense] rather than throwing, so
+  /// this client survives a future server-side type it doesn't know about
+  /// yet.
+  static ExpenseType fromJson(Object? value) =>
+      value == 'payment' ? ExpenseType.payment : ExpenseType.expense;
+}
+
 /// A group expense: paid by one [Member], owed back by one or more other
 /// [Member]s in arbitrary (possibly uneven) amounts.
+///
+/// A settle-up payment ([type] is [ExpenseType.payment]) is also represented
+/// as an [Expense]: [paidBy] is who paid, and [shares] has exactly one entry
+/// (who was paid back).
 @immutable
 class Expense {
   const Expense({
@@ -28,6 +45,7 @@ class Expense {
     required this.paidBy,
     required this.shares,
     required this.date,
+    this.type = ExpenseType.expense,
   });
 
   final String id;
@@ -37,6 +55,9 @@ class Expense {
   final Member paidBy;
   final List<ExpenseShare> shares;
   final DateTime date;
+  final ExpenseType type;
+
+  bool get isPayment => type == ExpenseType.payment;
 
   @override
   bool operator ==(Object other) {
@@ -57,6 +78,7 @@ class Expense {
         .map((share) => ExpenseShare.fromJson(share))
         .toList(),
     date: DateTime.parse(json['date'] as String),
+    type: ExpenseType.fromJson(json['type']),
   );
 }
 
@@ -91,4 +113,28 @@ class ExpenseShareInput {
   final double amount;
 
   Map<String, dynamic> toJson() => {'memberId': memberId, 'amount': amount};
+}
+
+/// Request body for `POST /groups/{groupId}/payments` — records that
+/// [fromMemberId] paid [toMemberId] back, reducing (or, if it overshoots,
+/// reversing) the balance between them.
+class CreatePaymentInput {
+  const CreatePaymentInput({
+    required this.fromMemberId,
+    required this.toMemberId,
+    required this.amount,
+    required this.date,
+  });
+
+  final String fromMemberId;
+  final String toMemberId;
+  final double amount;
+  final DateTime date;
+
+  Map<String, dynamic> toJson() => {
+    'fromMemberId': fromMemberId,
+    'toMemberId': toMemberId,
+    'amount': amount,
+    'date': date.toIso8601String(),
+  };
 }
