@@ -9,12 +9,14 @@ class ScreenHeader extends StatelessWidget {
   final String title;
   final bool isMainScreen;
   final Widget? trailing;
+  final bool showBackButton;
 
   const ScreenHeader({
     super.key,
     required this.title,
     this.isMainScreen = false,
     this.trailing,
+    this.showBackButton = true,
   });
 
   @override
@@ -44,16 +46,17 @@ class ScreenHeader extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ShadIconButton.ghost(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: theme.colorScheme.foreground,
+                  if (showBackButton)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ShadIconButton.ghost(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: theme.colorScheme.foreground,
+                        ),
+                        onPressed: () => context.pop(),
                       ),
-                      onPressed: () => context.pop(),
                     ),
-                  ),
                   Text(title, style: AppTypography.textTheme.h4),
                   if (trailing != null)
                     Align(alignment: Alignment.centerRight, child: trailing),
