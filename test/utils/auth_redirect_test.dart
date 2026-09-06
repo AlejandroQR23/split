@@ -27,5 +27,43 @@ void main() {
         isNull,
       );
     });
+
+    test('sends a signed-in user who still needs a name to onboarding', () {
+      expect(
+        resolveAuthRedirect(
+          isSignedIn: true,
+          isAuthRoute: false,
+          needsName: true,
+        ),
+        '/onboarding/name',
+      );
+    });
+
+    test('leaves a signed-in user who needs a name on the name route alone', () {
+      expect(
+        resolveAuthRedirect(
+          isSignedIn: true,
+          isAuthRoute: false,
+          needsName: true,
+          isOnboardingNameRoute: true,
+        ),
+        isNull,
+      );
+    });
+
+    test(
+      'sends a signed-in user who just set their name on to the '
+      'create-first-group nudge',
+      () {
+        expect(
+          resolveAuthRedirect(
+            isSignedIn: true,
+            isAuthRoute: false,
+            isOnboardingNameRoute: true,
+          ),
+          '/onboarding/group',
+        );
+      },
+    );
   });
 }

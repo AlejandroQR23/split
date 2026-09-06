@@ -35,4 +35,18 @@ void main() {
     await controller.close();
     refreshStream.dispose();
   });
+
+  test('notifies listeners when refresh() is called manually', () async {
+    final controller = StreamController<int>();
+    final refreshStream = GoRouterRefreshStream(controller.stream);
+    var notifyCount = 0;
+    refreshStream.addListener(() => notifyCount++);
+
+    refreshStream.refresh();
+
+    expect(notifyCount, 1);
+
+    await controller.close();
+    refreshStream.dispose();
+  });
 }

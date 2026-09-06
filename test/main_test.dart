@@ -13,6 +13,9 @@ class _SignedOutAuthRepository implements AuthRepository {
   User? get currentUser => null;
 
   @override
+  Future<String?> getIdToken({bool forceRefresh = false}) async => null;
+
+  @override
   Future<void> signIn({required String email, required String password}) {
     throw UnimplementedError();
   }
@@ -24,6 +27,11 @@ class _SignedOutAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateDisplayName(String name) {
     throw UnimplementedError();
   }
 }

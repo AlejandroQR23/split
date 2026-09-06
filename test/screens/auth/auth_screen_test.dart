@@ -23,6 +23,9 @@ class _FakeAuthRepository implements AuthRepository {
   User? get currentUser => null;
 
   @override
+  Future<String?> getIdToken({bool forceRefresh = false}) async => null;
+
+  @override
   Future<void> signIn({required String email, required String password}) async {
     signInCallCount++;
     lastEmail = email;
@@ -40,6 +43,11 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateDisplayName(String name) {
     throw UnimplementedError();
   }
 }
