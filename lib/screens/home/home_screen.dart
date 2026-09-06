@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/current_member_provider.dart';
 import 'package:split/widgets/balance/balance_stat.dart';
 import 'package:split/widgets/groups/recent_groups_section.dart';
 import 'package:split/widgets/history/recent_activity_section.dart';
@@ -15,7 +15,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.watch(requireCurrentMemberProvider);
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: AppColors.background),

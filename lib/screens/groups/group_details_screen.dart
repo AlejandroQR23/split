@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
 import 'package:split/providers/groups_provider.dart';
 import 'package:split/providers/transfer_provider.dart';
@@ -29,7 +29,7 @@ class GroupDetailsScreen extends ConsumerWidget {
     final groupsResponse = ref.watch(groupsProvider);
     final expensesResponse = ref.watch(expensesProvider(groupId));
     final transfersResponse = ref.watch(groupTransfersProvider(groupId));
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.watch(requireCurrentMemberProvider);
 
     final theme = ShadTheme.of(context);
     final loading = Center(

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/group.dart';
-import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/repositories/group_repository.dart';
 
@@ -56,7 +56,7 @@ class GroupsNotifier extends AsyncNotifier<List<Group>> {
 
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
   final client = ref.watch(httpClientProvider);
-  final user = ref.watch(currentUserProvider);
+  final user = ref.watch(requireCurrentMemberProvider);
 
   return GroupRepositoryImpl(client, user.id);
 });

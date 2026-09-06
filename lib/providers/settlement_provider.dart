@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:split/models/settlement.dart';
-import 'package:split/providers/current_user_provider.dart';
+import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/repositories/settlement_repository.dart';
 
 final settlementRepositoryProvider = Provider<SettlementRepository>((ref) {
   final client = ref.watch(httpClientProvider);
-  final user = ref.watch(currentUserProvider);
+  final user = ref.watch(requireCurrentMemberProvider);
 
   return SettlementRepositoryImpl(client, user.id);
 });
