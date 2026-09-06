@@ -21,6 +21,21 @@ void main() {
       expect(resolveAuthRedirect(isSignedIn: true, isAuthRoute: true), '/');
     });
 
+    test(
+      'leaves a signed-in user on an auth route alone while their Member '
+      'is still being fetched',
+      () {
+        expect(
+          resolveAuthRedirect(
+            isSignedIn: true,
+            isAuthRoute: true,
+            isMemberLoading: true,
+          ),
+          isNull,
+        );
+      },
+    );
+
     test('leaves a signed-in user on a non-auth route alone', () {
       expect(
         resolveAuthRedirect(isSignedIn: true, isAuthRoute: false),

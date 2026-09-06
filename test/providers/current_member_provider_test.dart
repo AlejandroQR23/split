@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -70,43 +68,4 @@ void main() {
     expect(fakeRepository.fetchMeCallCount, 1);
   });
 
-  group('requireCurrentMemberProvider', () {
-    test('throws before currentMemberProvider has resolved', () {
-      final container = ProviderContainer(
-        overrides: [
-          currentMemberProvider.overrideWith((ref) => Completer<Member?>().future),
-        ],
-      );
-      addTearDown(container.dispose);
-      container.listen(currentMemberProvider, (_, _) {});
-
-      expect(
-        () => container.read(requireCurrentMemberProvider),
-        throwsA(
-          predicate(
-            (e) => e
-                .toString()
-                .contains('requireCurrentMemberProvider was read before'),
-          ),
-        ),
-      );
-    });
-
-    test('returns the resolved Member', () async {
-      final container = ProviderContainer(
-        overrides: [
-          currentMemberProvider.overrideWith(
-            (ref) async => const Member(id: 'mem_02h', name: 'Sam Lee'),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
-      container.listen(currentMemberProvider, (_, _) {});
-      await container.read(currentMemberProvider.future);
-
-      final member = container.read(requireCurrentMemberProvider);
-
-      expect(member.id, 'mem_02h');
-    });
-  });
 }
