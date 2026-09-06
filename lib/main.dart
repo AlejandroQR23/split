@@ -50,13 +50,15 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isSignedIn = ref.read(authRepositoryProvider).currentUser != null;
       final isAuthRoute = _authRoutes.contains(state.matchedLocation);
-      final member = ref.read(currentMemberProvider).value;
+      final memberState = ref.read(currentMemberProvider);
+      final member = memberState.value;
       final needsName = member != null && member.name == Member.placeholderName;
       return resolveAuthRedirect(
         isSignedIn: isSignedIn,
         isAuthRoute: isAuthRoute,
         needsName: needsName,
         isOnboardingNameRoute: state.matchedLocation == _onboardingNameRoute,
+        isMemberLoading: memberState.isLoading,
       );
     },
     routes: [
