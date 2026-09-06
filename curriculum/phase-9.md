@@ -99,7 +99,7 @@ than "whoever has this device"?
 ## Out of scope (backend follow-up)
 
 The API does not verify `X-User-Id` — it trusts the header as sent. This
-phase makes the *client* honest (the id sent is now tied to a real signed-in
+phase makes the _client_ honest (the id sent is now tied to a real signed-in
 account), but nothing stops a modified client from sending someone else's
 id. Making that safe requires backend changes outside this Flutter
 curriculum: verifying Firebase ID tokens server-side (e.g. via the Firebase
@@ -110,6 +110,6 @@ checklist is complete.
 
 ## Checklist
 
-- [ ] 9.1 Pantallas de inicio de sesión y registro
-- [ ] 9.2 Estado de sesión y rutas protegidas
-- [ ] 9.3 De identidad de arranque a identidad real
+- [x] 9.1 Pantallas de inicio de sesión y registro
+- [x] 9.2 Estado de sesión y rutas protegidas
+- [x] 9.3 De identidad de arranque a identidad real
