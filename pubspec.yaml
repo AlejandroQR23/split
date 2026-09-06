@@ -45,6 +45,7 @@ dependencies:
   flutter_dotenv: ^6.0.1
   firebase_core: ^4.14.0
   firebase_auth: ^6.6.1
+  hugeicons: ^1.1.7
 
 dev_dependencies:
   flutter_test:
