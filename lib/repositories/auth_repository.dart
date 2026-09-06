@@ -1,18 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// Wraps Firebase Auth behind an interface, mirroring this app's existing
-/// repository pattern (see `GroupRepository`), so auth can be faked in
-/// tests without ever touching the real Firebase SDK.
 abstract class AuthRepository {
   Stream<User?> authStateChanges();
 
   User? get currentUser;
+
+  Future<String?> getIdToken({bool forceRefresh = false});
 
   Future<void> signIn({required String email, required String password});
 
   Future<void> signUp({required String email, required String password});
 
   Future<void> signOut();
+
+  Future<void> updateDisplayName(String name);
 }
 
 class FirebaseAuthRepository implements AuthRepository {
@@ -27,18 +28,16 @@ class FirebaseAuthRepository implements AuthRepository {
   User? get currentUser => _auth.currentUser;
 
   @override
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<String?> getIdToken({bool forceRefresh = false}) =>
+      _auth.currentUser?.getIdToken(forceRefresh) ?? Future.value(null);
+
+  @override
+  Future<void> signIn({required String email, required String password}) async {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
-  Future<void> signUp({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signUp({required String email, required String password}) async {
     await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -47,4 +46,12 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() => _auth.signOut();
+
+  @override
+  Future<void> updateDisplayName(String name) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    await user.updateDisplayName(name);
+    await user.reload();
+  }
 }
