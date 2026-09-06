@@ -26,15 +26,11 @@ abstract class AppTheme {
     colorScheme: AppColors.lightScheme,
     textTheme: AppTypography.textTheme,
     radius: BorderRadius.circular(AppRadii.md),
-    // shadcn_ui's own default theme draws a focused input's outer ring at
-    // `radius.add(radius / 2)` (1.5x) — at our radius that reads as visibly
-    // more rounded than the input itself. Match it to the input's own
-    // radius instead so the ring hugs the same shape.
     decoration: ShadDecoration(
       secondaryFocusedBorder: ShadBorder.all(
         width: 2,
         color: AppColors.primary,
-        radius: BorderRadius.circular(AppRadii.md),
+        radius: BorderRadius.circular(AppRadii.md + 4),
         offset: 4,
       ),
     ),
