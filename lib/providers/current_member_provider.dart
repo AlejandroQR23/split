@@ -14,18 +14,3 @@ final currentMemberProvider = FutureProvider<Member?>((ref) async {
 
   return ref.watch(memberRepositoryProvider).fetchMe();
 });
-
-/// The signed-in user's [Member], for call sites that only ever run after
-/// `MyApp`'s provisioning gate (see `main.dart`) has already resolved
-/// [currentMemberProvider] — e.g. every provider/screen reachable once
-/// signed in. Throws if read before that gate has passed.
-final requireCurrentMemberProvider = Provider<Member>((ref) {
-  final member = ref.watch(currentMemberProvider).value;
-  if (member == null) {
-    throw StateError(
-      'requireCurrentMemberProvider was read before currentMemberProvider '
-      'resolved a signed-in Member.',
-    );
-  }
-  return member;
-});

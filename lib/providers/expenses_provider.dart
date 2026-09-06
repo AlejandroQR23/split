@@ -26,7 +26,9 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
     ref.onDispose(timer.cancel);
 
-    return ref.watch(expenseRepositoryProvider).fetchExpensesForGroup(groupId);
+    final repository = ref.watch(expenseRepositoryProvider);
+    if (repository == null) return Future.value(const []);
+    return repository.fetchExpensesForGroup(groupId);
   }
 
   Future<void> _mutateAndRefresh(Future<void> Function() mutation) async {
@@ -34,7 +36,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
     final keepAlive = ref.keepAlive();
     try {
-      final repository = ref.read(expenseRepositoryProvider);
+      final repository = ref.read(expenseRepositoryProvider)!;
       await mutation();
       state = AsyncData(await repository.fetchExpensesForGroup(groupId));
       _invalidateExpensesRelated();
@@ -89,28 +91,38 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       date: DateTime.now(),
     );
     await _mutateAndRefresh(
-      () => ref.read(expenseRepositoryProvider).addExpense(expense, groupId),
+      () => ref.read(expenseRepositoryProvider)!.addExpense(expense, groupId),
     );
   }
 
   Future<void> removeExpense(String expenseId) async {
     await _mutateAndRefresh(
-      () => ref.read(expenseRepositoryProvider).removeExpense(expenseId),
+      () => ref.read(expenseRepositoryProvider)!.removeExpense(expenseId),
     );
   }
 
   Future<void> updateExpense(Expense updatedExpense) async {
     await _mutateAndRefresh(
-      () => ref.read(expenseRepositoryProvider).updateExpense(updatedExpense),
+      () => ref.read(expenseRepositoryProvider)!.updateExpense(updatedExpense),
     );
   }
 }
 
-final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  final client = ref.watch(httpClientProvider);
-  final user = ref.watch(requireCurrentMemberProvider);
+/// Null while there's no signed-in [Member] yet (or not currently), e.g. in
+/// the moment `currentMemberProvider` resolves to `null` on sign-out but
+/// before the screens watching this have unmounted. Nothing on this path may
+/// throw on a null [Member]: Riverpod flushes the whole provider graph from
+/// inside `ProviderScope.build()`, before the widget tree gets to unmount
+/// those screens, so a throw here escapes to the root of the app rather than
+/// being contained — see the `main_test.dart` regression test.
+final expenseRepositoryProvider = Provider.autoDispose<ExpenseRepository?>((
+  ref,
+) {
+  final member = ref.watch(currentMemberProvider).value;
+  if (member == null) return null;
 
-  return ExpenseRepositoryImpl(client, user.id);
+  final client = ref.watch(httpClientProvider);
+  return ExpenseRepositoryImpl(client, member.id);
 });
 
 final expensesProvider = AsyncNotifierProvider.autoDispose
@@ -121,13 +133,13 @@ final expensesProvider = AsyncNotifierProvider.autoDispose
 class AllExpensesNotifier extends AsyncNotifier<List<Expense>> {
   @override
   Future<List<Expense>> build() {
-    return ref
-        .watch(expenseRepositoryProvider)
-        .fetchExpenses(limit: _recentActivityLimit);
+    final repository = ref.watch(expenseRepositoryProvider);
+    if (repository == null) return Future.value(const []);
+    return repository.fetchExpenses(limit: _recentActivityLimit);
   }
 }
 
 final allExpensesProvider =
-    AsyncNotifierProvider<AllExpensesNotifier, List<Expense>>(
+    AsyncNotifierProvider.autoDispose<AllExpensesNotifier, List<Expense>>(
       AllExpensesNotifier.new,
     );
