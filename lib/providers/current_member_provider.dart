@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/member.dart';
 import 'package:split/providers/auth_provider.dart';
+import 'package:split/providers/invite_provider.dart';
 import 'package:split/providers/member_provider.dart';
 
 /// The signed-in user's backend `Member`, provisioned via `GET /members/me`
@@ -11,6 +12,20 @@ import 'package:split/providers/member_provider.dart';
 final currentMemberProvider = FutureProvider<Member?>((ref) async {
   final user = await ref.watch(authStateProvider.future);
   if (user == null) return null;
+
+  final pendingToken = ref.read(pendingInviteTokenProvider);
+  if (pendingToken != null) {
+    try {
+      final member = await ref
+          .read(inviteRepositoryProvider)
+          .claimInvite(pendingToken);
+      ref.read(pendingInviteTokenProvider.notifier).state = null;
+      return member;
+    } catch (_) {
+      ref.read(pendingInviteTokenProvider.notifier).state = null;
+      rethrow;
+    }
+  }
 
   return ref.watch(memberRepositoryProvider).fetchMe();
 });
