@@ -12,7 +12,6 @@ import 'providers/current_member_provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/expenses/add_expense_screen.dart';
 import 'screens/groups/create_group_screen.dart';
-import 'screens/groups/edit_group_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -88,22 +87,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/add-expense',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          return AddExpenseScreen(
-            groupId: state.uri.queryParameters['groupId'],
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: AddExpenseScreen(
+              groupId: state.uri.queryParameters['groupId'],
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 1),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                  reverseCurve: Curves.easeInCubic,
+                )),
+                child: child,
+              );
+            },
           );
         },
-      ),
-      GoRoute(
-        path: '/groups/new',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const CreateGroupScreen(),
-      ),
-      GoRoute(
-        path: '/groups/group/:groupId/edit',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) =>
-            EditGroupScreen(groupId: state.pathParameters['groupId']!),
       ),
       GoRoute(
         path: '/profile/edit',
