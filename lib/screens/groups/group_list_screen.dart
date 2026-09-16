@@ -9,6 +9,7 @@ import 'package:split/widgets/navigation/screen_header.dart';
 import '../../models/group.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'create_group_screen.dart';
 
 /// Shows every group the (hypothetical) current user belongs to, each with
 /// its member names visible.
@@ -30,7 +31,11 @@ class GroupListScreen extends ConsumerWidget {
             isMainScreen: true,
             trailing: ShadIconButton(
               icon: const HugeIcon(icon: HugeIcons.strokeRoundedPlusSign),
-              onPressed: () => context.push('/groups/new'),
+              onPressed: () => showShadSheet(
+                context: context,
+                useRootNavigator: true,
+                builder: (context) => const CreateGroupScreen(),
+              ),
             ),
           ),
           Expanded(

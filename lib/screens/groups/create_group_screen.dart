@@ -67,22 +67,28 @@ class _CreateGroupScreenState extends GroupFormScreenState<CreateGroupScreen> {
       membersHint: "You're added automatically — invite others by name.",
     );
 
-    return buildScreen(
-      title: widget.isFirstGroup ? 'Create your first group' : 'New group',
-      showBackButton: !widget.isFirstGroup,
-      body: buildFormWithPinnedSubmit(
-        form: form,
-        submitLabel: 'Create group',
-        extraFooterActions: [
-          if (widget.isFirstGroup) ...[
+    if (widget.isFirstGroup) {
+      return buildScreen(
+        title: 'Create your first group',
+        showBackButton: false,
+        body: buildFormWithPinnedSubmit(
+          form: form,
+          submitLabel: 'Create group',
+          extraFooterActions: [
             const SizedBox(height: AppSpacing.sm),
             ShadButton.ghost(
               onPressed: () => context.go('/'),
               child: const Text('Skip for now'),
             ),
           ],
-        ],
-      ),
+        ),
+      );
+    }
+
+    return buildSheet(
+      title: 'New group',
+      form: form,
+      submitLabel: 'Create group',
     );
   }
 }
