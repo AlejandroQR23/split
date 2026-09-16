@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/invite_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_typography.dart';
@@ -33,6 +34,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   void _switchMode(AuthMode mode) {
     if (mode == _mode) return;
+    if (mode == AuthMode.login) {
+      ref.read(pendingInviteTokenProvider.notifier).state = null;
+    }
     setState(() {
       _mode = mode;
       _fieldError = const AuthFieldError();

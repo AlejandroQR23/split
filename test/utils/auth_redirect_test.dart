@@ -80,5 +80,42 @@ void main() {
         );
       },
     );
+
+    test('never redirects an invite route when signed out', () {
+      expect(
+        resolveAuthRedirect(
+          isSignedIn: false,
+          isAuthRoute: false,
+          isInviteRoute: true,
+        ),
+        isNull,
+      );
+    });
+
+    test('never redirects an invite route when signed in', () {
+      expect(
+        resolveAuthRedirect(
+          isSignedIn: true,
+          isAuthRoute: false,
+          isInviteRoute: true,
+        ),
+        isNull,
+      );
+    });
+
+    test(
+      'never redirects an invite route even if the member still needs a name',
+      () {
+        expect(
+          resolveAuthRedirect(
+            isSignedIn: true,
+            isAuthRoute: false,
+            needsName: true,
+            isInviteRoute: true,
+          ),
+          isNull,
+        );
+      },
+    );
   });
 }
