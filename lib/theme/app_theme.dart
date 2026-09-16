@@ -60,6 +60,19 @@ abstract class AppTheme {
       radius: BorderRadius.circular(AppRadii.lg),
       shadows: AppShadows.card,
     ),
+
+    primaryDialogTheme: ShadDialogTheme(
+      radius: BorderRadius.circular(AppRadii.lg),
+      removeBorderRadiusWhenTiny: false,
+    ),
+    alertDialogTheme: ShadDialogTheme(
+      radius: BorderRadius.circular(AppRadii.lg),
+      removeBorderRadiusWhenTiny: false,
+    ),
+    sheetTheme: ShadSheetTheme(
+      radius: BorderRadius.vertical(top: Radius.circular(AppRadii.lg)),
+      actionsVerticalDirection: VerticalDirection.down,
+    ),
     // Fully pill-shaped, like every button — shadcn_ui's own default theme
     // otherwise hardcodes the active-tab indicator to a 4px radius while the
     // track uses the app-wide radius, which visibly mismatches.
