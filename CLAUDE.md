@@ -20,6 +20,14 @@ Flutter + Dart. Key packages: `shadcn_ui` (UI components/theming),
 (animation), `google_fonts` (Plus Jakarta Sans). `image_picker` is planned
 but not yet added.
 
+## Required reading before touching backend integration
+
+**[`docs/overview.md`](docs/overview.md)** — the single source of truth
+for what's actually implemented: architecture, the auth model, and the API
+contract for each domain (members, groups, expenses, balances). Read it
+before wiring a new repository call or changing an existing one — it
+fans out to a doc per feature under `docs/`.
+
 ## Required reading before writing any UI
 
 **[`docs/design-system.md`](docs/design-system.md)** — the single source of
@@ -50,6 +58,7 @@ this app is being built against. It defines:
 | 7     | Polish: `flutter_animate` & transitions | [phase-7.md](curriculum/phase-7.md) |
 | 8     | Real backend integration                | [phase-8.md](curriculum/phase-8.md) |
 | 9     | Authentication (Firebase Auth)          | [phase-9.md](curriculum/phase-9.md) |
+| 10    | Settling up                             | [phase-10.md](curriculum/phase-10.md) |
 
 Each phase file has a checklist (`- [ ]` / `- [x]`) tracking what's actually
 been implemented — **check the relevant phase file's checklist before
