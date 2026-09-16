@@ -8,6 +8,7 @@ import 'package:split/providers/expenses_provider.dart';
 import 'package:split/providers/groups_provider.dart';
 import 'package:split/providers/transfer_provider.dart';
 import 'package:split/widgets/balance/balance_stat.dart';
+import 'package:split/widgets/groups/group_members_section.dart';
 import 'package:split/widgets/history/expense_history_section.dart';
 import 'package:split/widgets/navigation/screen_header.dart';
 import 'package:split/widgets/settlement/pending_settlement.dart';
@@ -89,6 +90,8 @@ class _GroupDetailsContent extends StatelessWidget {
           groupId: group.id,
           onAddExpense: () => context.push('/add-expense?groupId=${group.id}'),
         ),
+        const SizedBox(height: AppSpacing.xl),
+        GroupMembersSection(members: group.members),
         const SizedBox(height: AppSpacing.xl),
         PendingSettlementsSection(
           transfers: transfers,

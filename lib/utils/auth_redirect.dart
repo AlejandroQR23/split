@@ -4,6 +4,13 @@
 /// it's trivially unit-testable. Returns null to allow the originally
 /// requested route through unchanged.
 ///
+/// [isInviteRoute] short-circuits every other rule: an invite link
+/// (`/invites/:token`) must render regardless of session state, in either
+/// direction — a signed-out visitor browses read-only, and a signed-in
+/// visitor needs to reach the "join with this account" CTA, which the
+/// generic signed-in-on-an-auth-route/needs-name rules would otherwise
+/// bounce away from.
+///
 /// [isMemberLoading] must be true whenever Firebase reports a signed-in
 /// user but the backend `Member` fetch hasn't resolved yet. Without this
 /// check, signing back in (after a sign-out) makes this redirect fire
@@ -20,7 +27,9 @@ String? resolveAuthRedirect({
   bool needsName = false,
   bool isOnboardingNameRoute = false,
   bool isMemberLoading = false,
+  bool isInviteRoute = false,
 }) {
+  if (isInviteRoute) return null;
   if (!isSignedIn && !isAuthRoute) return '/sign-in';
   if (isSignedIn && isMemberLoading) return null;
   if (isSignedIn && isAuthRoute) return '/';

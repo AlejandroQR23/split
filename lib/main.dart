@@ -15,6 +15,7 @@ import 'screens/groups/create_group_screen.dart';
 import 'screens/groups/group_details_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/invites/invite_screen.dart';
 import 'screens/onboarding/set_name_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
 import 'screens/profile/profile_screen.dart';
@@ -22,6 +23,7 @@ import 'screens/splash/member_provisioning_error_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'utils/auth_redirect.dart';
+import 'utils/deep_link.dart';
 import 'utils/go_router_refresh_stream.dart';
 import 'widgets/navigation/screen_scaffold.dart';
 
@@ -52,13 +54,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       final memberState = ref.read(currentMemberProvider);
       final member = memberState.value;
       final needsName = member != null && member.name == Member.placeholderName;
-      return resolveAuthRedirect(
+      final result = resolveAuthRedirect(
         isSignedIn: isSignedIn,
         isAuthRoute: isAuthRoute,
         needsName: needsName,
         isOnboardingNameRoute: state.matchedLocation == _onboardingNameRoute,
         isMemberLoading: memberState.isLoading,
+        isInviteRoute: state.matchedLocation.startsWith('/invites/'),
       );
+
+      return result;
     },
     routes: [
       GoRoute(
@@ -72,6 +77,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) =>
             const AuthScreen(initialMode: AuthMode.signUp),
+      ),
+      GoRoute(
+        path: '/invites/:token',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) =>
+            InviteScreen(token: state.pathParameters['token']!),
       ),
       GoRoute(
         path: _onboardingNameRoute,
@@ -93,19 +104,23 @@ final routerProvider = Provider<GoRouter>((ref) {
             child: AddExpenseScreen(
               groupId: state.uri.queryParameters['groupId'],
             ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 1),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                  reverseCurve: Curves.easeInCubic,
-                )),
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0, 1),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                            reverseCurve: Curves.easeInCubic,
+                          ),
+                        ),
+                    child: child,
+                  );
+                },
           );
         },
       ),
@@ -167,7 +182,12 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const ProviderScope(child: MyApp()));
+  final container = ProviderContainer();
+  listenForInviteDeepLinks(
+    (token) => container.read(routerProvider).go('/invites/$token'),
+  );
+
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

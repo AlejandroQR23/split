@@ -7,10 +7,10 @@ Map<String, dynamic> _expenseJson({Object? type}) {
     'groupId': 'grp_01h',
     'concept': 'Groceries',
     'amount': 42.25,
-    'paidBy': {'id': 'mem_01h', 'name': 'Alex Rivera'},
+    'paidBy': {'id': 'mem_01h', 'name': 'Alex Rivera', 'isGhost': false},
     'shares': [
       {
-        'member': {'id': 'mem_01h', 'name': 'Alex Rivera'},
+        'member': {'id': 'mem_01h', 'name': 'Alex Rivera', 'isGhost': false},
         'amount': 42.25,
       },
     ],
