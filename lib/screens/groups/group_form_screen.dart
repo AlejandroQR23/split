@@ -136,4 +136,43 @@ abstract class GroupFormScreenState<T extends ConsumerStatefulWidget>
       ),
     );
   }
+
+  /// forms reached from one button push each.
+  Widget buildSheet({
+    required String title,
+    required Widget form,
+    required String submitLabel,
+  }) {
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    return ShadSheet(
+      useSafeArea: false,
+      padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
+      title: Text(title),
+      scrollable: false,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: ShadButton(
+            onPressed: isSubmitting ? null : handleSubmit,
+            child: isSubmitting
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(submitLabel),
+          ),
+        ),
+      ],
+      child: Column(
+        children: [
+          Expanded(child: form),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+      ),
+    );
+  }
 }
