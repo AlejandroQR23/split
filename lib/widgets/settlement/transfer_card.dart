@@ -4,6 +4,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../models/member.dart';
 import '../../models/transfer.dart';
+import '../../screens/groups/settle_up_screen.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
@@ -15,17 +16,21 @@ class TransferCard extends StatelessWidget {
     required this.transfer,
     required this.currentUser,
     required this.memberById,
+    required this.groupId,
   });
 
   final Transfer transfer;
   final Member currentUser;
   final Map<String, Member> memberById;
 
+  final String groupId;
+
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     final youOwe = transfer.from == currentUser.id;
     final youAreOwed = transfer.to == currentUser.id;
+    final involvesMe = youOwe || youAreOwed;
     final amountColor = youOwe
         ? theme.colorScheme.destructive
         : youAreOwed
@@ -34,7 +39,7 @@ class TransferCard extends StatelessWidget {
     final fromName = youOwe ? 'You' : memberById[transfer.from]!.name;
     final toName = youAreOwed ? 'You' : memberById[transfer.to]!.name;
 
-    return ShadCard(
+    final card = ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +73,23 @@ class TransferCard extends StatelessWidget {
                     style: theme.textTheme.h4.copyWith(color: amountColor),
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  const ShadBadge.secondary(child: Text('Pending')),
+                  if (involvesMe)
+                    ShadBadge(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Settle up'),
+                          const SizedBox(width: AppSpacing.xs),
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedArrowRight01,
+                            size: 12,
+                            color: theme.colorScheme.primaryForeground,
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    const ShadBadge.secondary(child: Text('Pending')),
                 ],
               ),
             ],
@@ -77,6 +98,22 @@ class TransferCard extends StatelessWidget {
           Text('$fromName to $toName', style: theme.textTheme.large),
         ],
       ),
+    );
+
+    if (!involvesMe) return card;
+
+    return GestureDetector(
+      onTap: () => showShadSheet(
+        context: context,
+        useRootNavigator: true,
+        builder: (context) => SettleUpScreen(
+          groupId: groupId,
+          fromMemberId: transfer.from,
+          toMemberId: transfer.to,
+          suggestedAmount: transfer.amount,
+        ),
+      ),
+      child: card,
     );
   }
 }
