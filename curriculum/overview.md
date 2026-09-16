@@ -65,6 +65,7 @@ phase breakdown below is derived from — don't re-derive it per phase.
 | 21 | Local key-value persistence (`shared_preferences`) | 1 | [docs](https://pub.dev/packages/shared_preferences) |
 | 22 | Third-party auth SDK integration (sign-up/sign-in/session) | 13 | [docs](https://firebase.google.com/docs/auth/flutter/start) |
 | 23 | Auth state as a Riverpod provider & route guarding | 6, 7, 10, 22 | [docs](https://riverpod.dev/docs/concepts2/providers) |
+| 24 | Modeling a discriminated union across a network boundary | 19 | [docs](https://dart.dev/language/branches) |
 
 ## Phases
 
@@ -80,3 +81,4 @@ phase breakdown below is derived from — don't re-derive it per phase.
 | 7 | Polish: `flutter_animate` & transitions | 17, 18 | [phase-7.md](phase-7.md) |
 | 8 | Real backend integration | 19, 20, 21 | [phase-8.md](phase-8.md) |
 | 9 | Authentication (Firebase Auth) | 22, 23 | [phase-9.md](phase-9.md) |
+| 10 | Settling up | 24 | [phase-10.md](phase-10.md) |
