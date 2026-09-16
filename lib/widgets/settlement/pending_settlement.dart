@@ -16,12 +16,16 @@ class PendingSettlementsSection extends StatefulWidget {
     required this.currentUser,
     required this.members,
     required this.groupId,
+    this.canInvite = true,
   });
 
   final List<Transfer> transfers;
   final Member currentUser;
   final List<Member> members;
   final String groupId;
+
+  /// Threaded through to each [TransferCard] — see its doc comment.
+  final bool canInvite;
 
   @override
   State<PendingSettlementsSection> createState() =>
@@ -68,6 +72,7 @@ class _PendingSettlementsSectionState
                   currentUser: widget.currentUser,
                   memberById: memberById,
                   groupId: widget.groupId,
+                  canInvite: widget.canInvite,
                 ),
             ],
           ),

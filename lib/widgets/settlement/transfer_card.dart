@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -8,15 +9,17 @@ import '../../screens/groups/settle_up_screen.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
+import '../../utils/invite_share.dart';
 import '../shared/avatar.dart';
 
-class TransferCard extends StatelessWidget {
+class TransferCard extends ConsumerWidget {
   const TransferCard({
     super.key,
     required this.transfer,
     required this.currentUser,
     required this.memberById,
     required this.groupId,
+    this.canInvite = true,
   });
 
   final Transfer transfer;
@@ -25,9 +28,17 @@ class TransferCard extends StatelessWidget {
 
   final String groupId;
 
+  /// Whether the ghost-invite row may be shown at all. Set to `false` for
+  /// read-only viewers (e.g. a guest browsing via an invite link) — they
+  /// must never see or trigger `generateInvite`, a write action that also
+  /// rotates (and invalidates) any invite token currently in flight.
+  final bool canInvite;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = ShadTheme.of(context);
+    final fromMember = memberById[transfer.from]!;
+    final toMember = memberById[transfer.to]!;
     final youOwe = transfer.from == currentUser.id;
     final youAreOwed = transfer.to == currentUser.id;
     final involvesMe = youOwe || youAreOwed;
@@ -36,8 +47,8 @@ class TransferCard extends StatelessWidget {
         : youAreOwed
         ? theme.colorScheme.primary
         : theme.colorScheme.foreground;
-    final fromName = youOwe ? 'You' : memberById[transfer.from]!.name;
-    final toName = youAreOwed ? 'You' : memberById[transfer.to]!.name;
+    final fromName = youOwe ? 'You' : fromMember.name;
+    final toName = youAreOwed ? 'You' : toMember.name;
 
     final card = ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -96,6 +107,37 @@ class TransferCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text('$fromName to $toName', style: theme.textTheme.large),
+          if (canInvite && (fromMember.isGhost || toMember.isGhost)) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: [
+                if (fromMember.isGhost)
+                  ShadButton.ghost(
+                    leading: HugeIcon(
+                      icon: HugeIcons.strokeRoundedShare08,
+                      size: 14,
+                      color: theme.colorScheme.primary,
+                    ),
+                    onPressed: () =>
+                        generateAndShareInvite(context, ref, fromMember),
+                    child: Text('Invite ${fromMember.name}'),
+                  ),
+                if (toMember.isGhost)
+                  ShadButton.ghost(
+                    leading: HugeIcon(
+                      icon: HugeIcons.strokeRoundedShare08,
+                      size: 14,
+                      color: theme.colorScheme.primary,
+                    ),
+                    onPressed: () =>
+                        generateAndShareInvite(context, ref, toMember),
+                    child: Text('Invite ${toMember.name}'),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );
