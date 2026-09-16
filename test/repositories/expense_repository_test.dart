@@ -24,10 +24,10 @@ void main() {
             'groupId': 'grp_01h',
             'concept': 'Settle up',
             'amount': 20.0,
-            'paidBy': {'id': 'mem_02h', 'name': 'Sam Lee'},
+            'paidBy': {'id': 'mem_02h', 'name': 'Sam Lee', 'isGhost': false},
             'shares': [
               {
-                'member': {'id': 'mem_01h', 'name': 'Alex Rivera'},
+                'member': {'id': 'mem_01h', 'name': 'Alex Rivera', 'isGhost': false},
                 'amount': 20.0,
               },
             ],

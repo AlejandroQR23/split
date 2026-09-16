@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/auth_provider.dart';
+import 'package:split/providers/invite_provider.dart';
 import 'package:split/repositories/auth_repository.dart';
 import 'package:split/screens/auth/auth_screen.dart';
 
@@ -149,6 +150,37 @@ void main() {
 
     expect(find.text('Incorrect password.'), findsOneWidget);
   });
+
+  testWidgets(
+    'switching to the Login tab clears a pending invite token',
+    (tester) async {
+      final authRepository = _FakeAuthRepository();
+      final container = ProviderContainer(
+        overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
+      );
+      addTearDown(container.dispose);
+      container.read(pendingInviteTokenProvider.notifier).state =
+          'inv_test123';
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: ShadApp(
+            home: Scaffold(
+              body: AuthScreen(initialMode: AuthMode.signUp),
+            ),
+          ),
+        ),
+      );
+
+      expect(container.read(pendingInviteTokenProvider), 'inv_test123');
+
+      await tester.tap(find.text('Login'));
+      await tester.pump();
+
+      expect(container.read(pendingInviteTokenProvider), isNull);
+    },
+  );
 
   testWidgets('toggles password visibility', (tester) async {
     final authRepository = _FakeAuthRepository();

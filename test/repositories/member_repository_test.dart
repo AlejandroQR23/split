@@ -12,7 +12,7 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, 'members/me');
         return http.Response(
-          jsonEncode({'id': 'mem_01h', 'name': 'Alex Rivera'}),
+          jsonEncode({'id': 'mem_01h', 'name': 'Alex Rivera', 'isGhost': false}),
           200,
         );
       });
@@ -32,7 +32,7 @@ void main() {
         expect(request.url.path, 'members/mem_01h');
         expect(jsonDecode(request.body), {'name': 'Alex R. Rivera'});
         return http.Response(
-          jsonEncode({'id': 'mem_01h', 'name': 'Alex R. Rivera'}),
+          jsonEncode({'id': 'mem_01h', 'name': 'Alex R. Rivera', 'isGhost': false}),
           200,
         );
       });
