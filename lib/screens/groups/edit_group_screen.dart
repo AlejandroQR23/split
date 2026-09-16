@@ -46,6 +46,16 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
     context.pop();
   }
 
+  Widget _skeletonSheet(BuildContext context, Widget child) {
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    return ShadSheet(
+      useSafeArea: false,
+      padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
+      title: const Text('Edit group'),
+      child: SizedBox(height: 160, child: child),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final groupsResponse = ref.watch(groupsProvider);
@@ -54,32 +64,34 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
       child: CircularProgressIndicator(color: theme.colorScheme.primary),
     );
 
-    return buildScreen(
-      title: 'Edit group',
-      body: groupsResponse.when(
-        skipError: true,
-        loading: () => loading,
-        error: (error, stackTrace) => AsyncErrorText(error: error),
-        data: (groups) {
-          final group = groups.where((g) => g.id == widget.groupId).firstOrNull;
-          if (group == null) {
-            return const AsyncErrorText(error: 'Group not found');
-          }
-
-          return buildFormWithPinnedSubmit(
-            form: GroupForm(
-              formKey: formKey,
-              memberControllers: memberControllers,
-              onAddMemberField: addMemberField,
-              onRemoveMemberField: removeMemberField,
-              membersHint: 'Invite more people by name.',
-              initialName: group.name,
-              existingMembers: group.members,
-            ),
-            submitLabel: 'Save changes',
+    return groupsResponse.when(
+      skipError: true,
+      loading: () => _skeletonSheet(context, loading),
+      error: (error, stackTrace) =>
+          _skeletonSheet(context, AsyncErrorText(error: error)),
+      data: (groups) {
+        final group = groups.where((g) => g.id == widget.groupId).firstOrNull;
+        if (group == null) {
+          return _skeletonSheet(
+            context,
+            const AsyncErrorText(error: 'Group not found'),
           );
-        },
-      ),
+        }
+
+        return buildSheet(
+          title: 'Edit group',
+          form: GroupForm(
+            formKey: formKey,
+            memberControllers: memberControllers,
+            onAddMemberField: addMemberField,
+            onRemoveMemberField: removeMemberField,
+            membersHint: 'Invite more people by name.',
+            initialName: group.name,
+            existingMembers: group.members,
+          ),
+          submitLabel: 'Save changes',
+        );
+      },
     );
   }
 }

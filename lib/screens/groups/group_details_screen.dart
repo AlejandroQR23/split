@@ -19,6 +19,7 @@ import '../../models/member.dart';
 import '../../models/transfer.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'edit_group_screen.dart';
 
 class GroupDetailsScreen extends ConsumerWidget {
   final String groupId;
@@ -93,9 +94,14 @@ class _GroupDetailsContent extends StatelessWidget {
           transfers: transfers,
           currentUser: currentUser,
           members: group.members,
+          groupId: group.id,
         ),
         const SizedBox(height: AppSpacing.xl),
-        ExpenseHistorySection(expenses: expenses, currentUser: currentUser),
+        ExpenseHistorySection(
+          expenses: expenses,
+          currentUser: currentUser,
+          groupId: group.id,
+        ),
       ],
     );
 
@@ -107,7 +113,11 @@ class _GroupDetailsContent extends StatelessWidget {
             title: group.name,
             trailing: ShadIconButton.ghost(
               icon: const HugeIcon(icon: HugeIcons.strokeRoundedPen01),
-              onPressed: () => context.push('/groups/group/${group.id}/edit'),
+              onPressed: () => showShadSheet(
+                context: context,
+                useRootNavigator: true,
+                builder: (context) => EditGroupScreen(groupId: group.id),
+              ),
             ),
           ),
           Expanded(child: body),
