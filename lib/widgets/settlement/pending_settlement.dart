@@ -15,11 +15,13 @@ class PendingSettlementsSection extends StatefulWidget {
     required this.transfers,
     required this.currentUser,
     required this.members,
+    required this.groupId,
   });
 
   final List<Transfer> transfers;
   final Member currentUser;
   final List<Member> members;
+  final String groupId;
 
   @override
   State<PendingSettlementsSection> createState() =>
@@ -65,6 +67,7 @@ class _PendingSettlementsSectionState
                   transfer: transfer,
                   currentUser: widget.currentUser,
                   memberById: memberById,
+                  groupId: widget.groupId,
                 ),
             ],
           ),
