@@ -7,8 +7,8 @@ Every phase up to now has been built against a mock `GroupRepository` /
 latency. That was deliberate — Phase 2 put the repository interface behind
 an abstraction specifically so the mock could be swapped for something real
 without touching the screens above it. This phase makes that swap: the app
-starts talking to the actual HTTP API documented in
-[`docs/frontend-guide.md`](../docs/frontend-guide.md).
+starts talking to the actual HTTP API documented under
+[`docs/`](../docs/overview.md).
 
 Two things fall out of this that aren't just "point the app at a URL."
 First, real network calls fail in ways the mock never did — timeouts,
@@ -44,7 +44,9 @@ Concepts from the graph in overview.md this phase assumes or introduces:
 What it does: replaces `GroupRepositoryImpl` and `ExpenseRepositoryImpl`'s
 in-memory mock data with implementations that call the real API — `POST
 /groups`, `GET /groups`, `POST /groups/{id}/expenses`, etc., per
-`docs/frontend-guide.md`. The `GroupRepository`/`ExpenseRepository`
+[`docs/groups/overview.md`](../docs/groups/overview.md) and
+[`docs/expenses/overview.md`](../docs/expenses/overview.md). The
+`GroupRepository`/`ExpenseRepository`
 interfaces from Phase 2 don't change; only what implements them does, which
 is the entire point of having drawn that boundary back then.
 Concept(s) exercised: HTTP client & REST integration — [docs](https://pub.dev/packages/http).
@@ -125,5 +127,5 @@ correct choice once balances are multi-user data?
 
 - [x] 8.1 Repositorios reales sobre la API HTTP
 - [x] 8.2 Manejo de errores de red
-- [ ] 8.3 Identidad de arranque persistente
+- [x] 8.3 Identidad de arranque persistente
 - [x] 8.4 Balances y settlements calculados por el servidor

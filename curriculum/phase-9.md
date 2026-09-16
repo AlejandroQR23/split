@@ -16,10 +16,12 @@ mature, whereas Clerk's Flutter SDK is community-maintained and currently
 beta. Firebase Auth doesn't require adopting any other Firebase product —
 this phase uses it purely for identity.
 
-**Scope note:** this phase is client-side only. Per
-[`docs/frontend-guide.md`](../docs/frontend-guide.md), the API currently
-trusts `X-User-Id` as-is and does not verify it — that's true before and
-after this phase. See "Out of scope" below.
+**Scope note:** this phase is client-side only. At the time this phase was
+written, the API trusted an `X-User-Id` header as-is and didn't verify
+it — see "Out of scope" below for what that implied. That has since
+changed: the backend now verifies a Firebase ID token instead, per
+[`docs/auth/backend.md`](../docs/auth/backend.md); the "Out of scope"
+backend follow-up below is no longer outstanding.
 
 ## Libraries / tools used this phase
 
@@ -97,6 +99,10 @@ is right for, now that it's tied to a specific signed-in account rather
 than "whoever has this device"?
 
 ## Out of scope (backend follow-up)
+
+**Update: this follow-up has since shipped** — see
+[`docs/auth/backend.md`](../docs/auth/backend.md). Left below as the
+original reasoning for why it was flagged.
 
 The API does not verify `X-User-Id` — it trusts the header as sent. This
 phase makes the _client_ honest (the id sent is now tied to a real signed-in
