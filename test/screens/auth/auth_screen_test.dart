@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:split/providers/auth_provider.dart';
 import 'package:split/providers/invite_provider.dart';
@@ -190,7 +191,12 @@ void main() {
     ShadInput passwordInput = tester.widget(passwordInputFinder);
     expect(passwordInput.obscureText, isTrue);
 
-    await tester.tap(find.byIcon(LucideIcons.eyeOff));
+    await tester.tap(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is HugeIcon && widget.icon == HugeIcons.strokeRoundedViewOff,
+      ),
+    );
     await tester.pump();
 
     passwordInput = tester.widget(passwordInputFinder);
