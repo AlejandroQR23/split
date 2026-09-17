@@ -51,5 +51,10 @@ app.*.map.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 
+# Android release signing (never commit — this is the app's signing identity)
+android/key.properties
+android/app/*.jks
+android/app/*.keystore
+
 # Superpowers subagent-driven-development scratch workspace
 .superpowers/
