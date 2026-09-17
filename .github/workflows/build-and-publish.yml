@@ -25,14 +25,37 @@ jobs:
           flutter-version: '3.44.8'
           channel: stable
 
+      - name: Check required secrets are set
+        run: |
+          missing=()
+          [ -z "${{ secrets.API_URL }}" ] && missing+=(API_URL)
+          [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ] && missing+=(GOOGLE_SERVICES_JSON_BASE64)
+          [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ] && missing+=(ANDROID_KEYSTORE_BASE64)
+          [ -z "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ] && missing+=(ANDROID_KEYSTORE_PASSWORD)
+          [ -z "${{ secrets.FIREBASE_TOKEN }}" ] && missing+=(FIREBASE_TOKEN)
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Missing/empty repo secrets: ${missing[*]}"
+            exit 1
+          fi
+
       - name: Create .env
         run: echo "API_URL=${{ secrets.API_URL }}" > .env
 
       - name: Create google-services.json
-        run: echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > android/app/google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d --ignore-garbage > android/app/google-services.json
+          if ! python3 -c "import json; json.load(open('android/app/google-services.json'))"; then
+            echo "::error::android/app/google-services.json is not valid JSON after decoding GOOGLE_SERVICES_JSON_BASE64 — re-check the secret was set to the base64 output (base64 -i android/app/google-services.json), not the raw JSON."
+            exit 1
+          fi
 
       - name: Create release keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d --ignore-garbage > android/app/upload-keystore.jks
+          if ! keytool -list -keystore android/app/upload-keystore.jks -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > /dev/null; then
+            echo "::error::android/app/upload-keystore.jks failed to open with ANDROID_KEYSTORE_PASSWORD — re-check ANDROID_KEYSTORE_BASE64 (base64 -i android/app/upload-keystore.jks) and ANDROID_KEYSTORE_PASSWORD."
+            exit 1
+          fi
 
       - name: Create key.properties
         run: |
