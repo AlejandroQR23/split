@@ -1,0 +1,41 @@
+name: Bug report
+description: Something isn't working as documented or expected
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >
+        Describe the problem. What is happening, and what should happen
+        instead? Do not propose a fix here — just describe the defect.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps (or code path / inputs) that trigger the bug.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: >
+        What must be true for this to be considered resolved? Describe the
+        expected behavior/outcome, not the implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Reference docs
+      description: Links to any relevant docs (e.g. `docs/architecture.md`).
+    validations:
+      required: false

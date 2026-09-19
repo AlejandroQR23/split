@@ -1,0 +1,31 @@
+name: Refactor
+description: Existing code works but has a structural, consistency, or quality problem
+title: "[Refactor]: "
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >
+        Describe the problem with the current code (duplication,
+        inconsistency, drift, poor structure, etc.) and why it matters.
+        Do not propose the solution here — just describe the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: >
+        What must be true for this to be considered resolved? Describe the
+        expected end state, not the implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Reference docs
+      description: Links to any relevant docs (e.g. `docs/architecture.md`).
+    validations:
+      required: false

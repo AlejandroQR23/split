@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose new functionality that doesn't exist yet
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >
+        Describe what is missing and why it's needed. Focus on the gap or
+        need, not on how to build it — leave the solution to implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: >
+        What must be true for this feature to be considered done? Describe
+        the expected behavior/outcome, not the implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Reference docs
+      description: >
+        Links to any relevant docs (e.g. `curriculum/phase-4.md`,
+        `docs/architecture.md`).
+    validations:
+      required: false
