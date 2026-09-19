@@ -68,6 +68,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     required double amount,
     required Member paidBy,
     required List<Member> splitBetween,
+    String? labelId,
   }) async {
     final amountCents = (amount * 100).round();
     final splitCount = splitBetween.length;
@@ -89,6 +90,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
           ),
       ],
       date: DateTime.now(),
+      labelId: labelId,
     );
     await _mutateAndRefresh(
       () => ref.read(expenseRepositoryProvider)!.addExpense(expense, groupId),
