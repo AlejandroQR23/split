@@ -14,6 +14,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/app_typography.dart';
 import '../../utils/network_exception.dart';
 import '../../widgets/invites/invite_groups_list.dart';
+import '../../widgets/shared/sheet_content_spacer.dart';
 
 class InviteScreen extends ConsumerWidget {
   const InviteScreen({super.key, required this.token});
@@ -190,7 +191,7 @@ class _InviteClaimCta extends ConsumerWidget {
               child: const Text('Join'),
             ),
           ],
-          child: const SizedBox(height: AppSpacing.sm),
+          child: sheetContentSpacer,
         );
       },
     );

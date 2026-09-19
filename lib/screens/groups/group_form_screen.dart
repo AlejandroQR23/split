@@ -6,6 +6,7 @@ import 'package:split/utils/network_exception.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/navigation/screen_header.dart';
+import '../../widgets/shared/sheet_content_spacer.dart';
 
 /// Shared state/behavior for [CreateGroupScreen] and [EditGroupScreen]: the
 /// form key, the dynamic member-name controllers, the submitting flag, and
@@ -167,12 +168,7 @@ abstract class GroupFormScreenState<T extends ConsumerStatefulWidget>
           ),
         ),
       ],
-      child: Column(
-        children: [
-          Expanded(child: form),
-          const SizedBox(height: AppSpacing.sm),
-        ],
-      ),
+      child: Column(children: [Expanded(child: form), sheetContentSpacer]),
     );
   }
 }

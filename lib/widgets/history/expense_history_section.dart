@@ -11,6 +11,7 @@ import '../../providers/expenses_provider.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
 import '../../utils/network_exception.dart';
+import '../shared/sheet_content_spacer.dart';
 import 'expense_tile_content.dart';
 
 class ExpenseHistorySection extends StatefulWidget {
@@ -119,7 +120,7 @@ class _ExpenseHistoryTile extends ConsumerWidget {
               child: const Text('Undo'),
             ),
           ],
-          child: const SizedBox(height: AppSpacing.sm),
+          child: sheetContentSpacer,
         );
       },
     );

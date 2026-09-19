@@ -14,6 +14,7 @@ import '../../theme/app_spacing.dart';
 import '../../utils/network_exception.dart';
 import '../../widgets/shared/async_error_text.dart';
 import '../../widgets/shared/avatar.dart';
+import '../../widgets/shared/sheet_content_spacer.dart';
 
 /// Records that [fromMemberId] paid [toMemberId] back, reached by tapping a
 /// pending [Transfer] the current user is a party to. [suggestedAmount]
@@ -244,7 +245,7 @@ class _SettleUpForm extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          sheetContentSpacer,
         ],
       ),
     );
