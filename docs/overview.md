@@ -29,7 +29,7 @@ behavior, trust `docs/` and the code over `curriculum/`.
 | Auth & identity | [`auth/overview.md`](auth/overview.md), [`auth/backend.md`](auth/backend.md) | Firebase sign-up/sign-in, session state, route guarding, linking a signed-in account to a backend `Member` |
 | Members | [`members/overview.md`](members/overview.md) | The `Member` resource — the person behind an expense or a group |
 | Groups | [`groups/overview.md`](groups/overview.md) | The `Group` resource — who's splitting expenses together |
-| Expenses | [`expenses/overview.md`](expenses/overview.md), [`expenses/payments.md`](expenses/payments.md) | Logging shared expenses, and recording settle-up payments between members |
+| Expenses | [`expenses/overview.md`](expenses/overview.md), [`expenses/payments.md`](expenses/payments.md), [`expenses/labels.md`](expenses/labels.md) | Logging shared expenses, recording settle-up payments, and tagging expenses with a reusable per-group label |
 | Balances & settling up | [`balances/overview.md`](balances/overview.md) | Computing who owes whom, and the minimum set of transfers to settle a group |
 
 ## Other references

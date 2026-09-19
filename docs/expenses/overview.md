@@ -11,7 +11,9 @@ expenses in a group" endpoint, since that's exactly what
 `DELETE /groups/{groupId}` already does.
 
 An `Expense` can also represent a settle-up **payment** — see
-[`payments.md`](payments.md) — distinguished by `type`.
+[`payments.md`](payments.md) — distinguished by `type`. An expense can
+also carry at most one **label**, a group-scoped category — see
+[`labels.md`](labels.md).
 
 ## Resource
 
@@ -27,7 +29,8 @@ An `Expense` can also represent a settle-up **payment** — see
     { "member": { "id": "mem_02h...", "name": "Sam Lee" }, "amount": 42.25 }
   ],
   "date": "2026-08-22T14:30:00Z",
-  "type": "expense"
+  "type": "expense",
+  "label": { "id": "lbl_01h...", "groupId": "grp_01h...", "name": "Food", "color": "#4CB963", "icon": "🍕" }
 }
 ```
 
@@ -36,7 +39,11 @@ An `Expense` can also represent a settle-up **payment** — see
 rather than throwing, so the client tolerates a future server-side type it
 doesn't know about yet.
 
+`label` is the embedded `Label` ([`labels.md`](labels.md)) this expense
+was tagged with, or `null`. Payments never carry one.
+
 Repository: [`lib/repositories/expense_repository.dart`](../../lib/repositories/expense_repository.dart).
+Label repository: [`lib/repositories/label_repository.dart`](../../lib/repositories/label_repository.dart) — see [`labels.md`](labels.md).
 
 ## Endpoints
 
@@ -53,18 +60,21 @@ Request:
     { "memberId": "mem_01h...", "amount": 42.25 },
     { "memberId": "mem_02h...", "amount": 42.25 }
   ],
-  "date": "2026-08-22T14:30:00Z"
+  "date": "2026-08-22T14:30:00Z",
+  "labelId": "lbl_01h..."
 }
 ```
 
-`date` is optional; defaults to "now" (UTC) if omitted. `201` → the full
-`Expense`.
+`date` is optional; defaults to "now" (UTC) if omitted. `labelId` is
+optional — see [`labels.md`](labels.md). `201` → the full `Expense`.
 
 Errors (all `422 validation_error` unless noted): `amount` ≤ 0; `shares`
 empty; `shares[].amount` values don't sum to `amount` (0.005 epsilon
 tolerated for float rounding); `paidById` or a `shares[].memberId` isn't a
 member of `groupId` (`404 not_found` if the id doesn't exist as a member
-at all, vs. `422 not_group_member` if it exists but isn't in this group).
+at all, vs. `422 not_group_member` if it exists but isn't in this group);
+`labelId` doesn't exist (`404 not_found`) or belongs to another group
+(`422 label_not_in_group`).
 
 ### `GET /groups/{groupId}/expenses`
 
