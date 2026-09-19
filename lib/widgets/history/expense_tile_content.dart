@@ -83,6 +83,25 @@ class ExpenseTileContent extends StatelessWidget {
                 Text(titleText, style: theme.textTheme.large),
                 const SizedBox(height: AppSpacing.xs),
                 Text(subtitleText, style: theme.textTheme.muted),
+                if (expense.label != null) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  ShadBadge.raw(
+                    variant: ShadBadgeVariant.secondary,
+                    backgroundColor: expense.label!.color.withValues(
+                      alpha: 0.15,
+                    ),
+                    foregroundColor: expense.label!.color,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadii.sm),
+                    ),
+                    child: Text(
+                      [
+                        if (expense.label!.icon != null) expense.label!.icon!,
+                        expense.label!.name,
+                      ].join(' '),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
