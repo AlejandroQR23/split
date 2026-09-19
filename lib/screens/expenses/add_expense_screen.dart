@@ -28,6 +28,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   String? _selectedGroupId;
   String? _payerId;
   final Set<String> _splitMemberIds = {};
+  String? _selectedLabelId;
   bool _submitted = false;
   bool _isSubmitting = false;
 
@@ -50,6 +51,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       _selectedGroupId = groupId;
       _payerId = null;
       _splitMemberIds.clear();
+      _selectedLabelId = null;
     });
   }
 
@@ -84,6 +86,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
             amount: amount,
             paidBy: payer,
             splitBetween: splitMembers,
+            labelId: _selectedLabelId,
           );
     } catch (error) {
       if (!mounted) return;
@@ -139,6 +142,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
             ..addAll(ids);
         }),
         onSubmit: () => _handleSubmit(groupsResponse.value),
+        selectedLabelId: _selectedLabelId,
+        onLabelChanged: (labelId) =>
+            setState(() => _selectedLabelId = labelId),
       );
     }
 

@@ -5,6 +5,7 @@ import '../../models/group.dart';
 import '../../models/member.dart';
 import '../../theme/app_spacing.dart';
 import '../shared/member_selector.dart';
+import 'label_field.dart';
 
 /// Form body for [AddExpenseScreen]: group/concept/amount fields plus the
 /// "Paid by" and "Split between" member pickers.
@@ -24,6 +25,8 @@ class AddExpenseForm extends StatelessWidget {
     required this.onPayerChanged,
     required this.onSplitMemberIdsChanged,
     required this.onSubmit,
+    this.selectedLabelId,
+    required this.onLabelChanged,
   });
 
   final List<Group> groups;
@@ -39,6 +42,8 @@ class AddExpenseForm extends StatelessWidget {
   final ValueChanged<String?> onPayerChanged;
   final ValueChanged<Set<String>> onSplitMemberIdsChanged;
   final VoidCallback onSubmit;
+  final String? selectedLabelId;
+  final ValueChanged<String?> onLabelChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +127,17 @@ class AddExpenseForm extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: AppSpacing.lg),
+        Text('Label (optional)', style: fieldLabelStyle),
+        const SizedBox(height: AppSpacing.sm),
+        if (group == null)
+          Text('Select a group first', style: theme.textTheme.muted)
+        else
+          LabelField(
+            groupId: group.id,
+            selectedLabelId: selectedLabelId,
+            onChanged: onLabelChanged,
+          ),
         const SizedBox(height: AppSpacing.lg),
         Text('Paid by', style: fieldLabelStyle),
         const SizedBox(height: AppSpacing.sm),
