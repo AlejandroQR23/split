@@ -44,6 +44,20 @@ abstract class AppColors {
   static const destructive = Color(0xFFE5484D);
   static const destructiveForeground = Color(0xFFFFFFFF);
 
+  /// Swatches offered when creating a label. Spans a range of hues so
+  /// labels stay visually distinguishable in a chip row; a label always
+  /// renders whatever color the server sent, not just one of these.
+  static const labelPalette = [
+    primary,
+    Color(0xFF4A90D9),
+    Color(0xFFE07856),
+    Color(0xFFECB0E1),
+    Color(0xFFD9B54A),
+    Color(0xFF8E6FD1),
+    Color(0xFF52B7B0),
+    Color(0xFFD9647E),
+  ];
+
   /// The app's shadcn color scheme. Light only — this app has no dark theme.
   ///
   /// Built from [ShadZincColorScheme.light] so every field shadcn expects is
