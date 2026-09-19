@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import 'label.dart';
 import 'member.dart';
 
 /// One [Member]'s owed portion of an [Expense].
@@ -46,6 +47,7 @@ class Expense {
     required this.shares,
     required this.date,
     this.type = ExpenseType.expense,
+    this.label,
   });
 
   final String id;
@@ -56,6 +58,7 @@ class Expense {
   final List<ExpenseShare> shares;
   final DateTime date;
   final ExpenseType type;
+  final Label? label;
 
   bool get isPayment => type == ExpenseType.payment;
 
@@ -79,6 +82,9 @@ class Expense {
         .toList(),
     date: DateTime.parse(json['date'] as String),
     type: ExpenseType.fromJson(json['type']),
+    label: json['label'] == null
+        ? null
+        : Label.fromJson(json['label'] as Map<String, dynamic>),
   );
 }
 
@@ -89,6 +95,7 @@ class CreateExpenseInput {
     required this.paidById,
     required this.shares,
     required this.date,
+    this.labelId,
   });
 
   final String concept;
@@ -96,6 +103,7 @@ class CreateExpenseInput {
   final String paidById;
   final List<ExpenseShareInput> shares;
   final DateTime date;
+  final String? labelId;
 
   Map<String, dynamic> toJson() => {
     'concept': concept,
@@ -103,6 +111,7 @@ class CreateExpenseInput {
     'paidById': paidById,
     'shares': shares.map((share) => share.toJson()).toList(),
     'date': date.toIso8601String(),
+    if (labelId != null) 'labelId': labelId,
   };
 }
 

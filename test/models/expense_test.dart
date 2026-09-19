@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:split/models/expense.dart';
 
-Map<String, dynamic> _expenseJson({Object? type}) {
+Map<String, dynamic> _expenseJson({Object? type, Object? label}) {
   final json = {
     'id': 'exp_01h',
     'groupId': 'grp_01h',
@@ -15,6 +15,7 @@ Map<String, dynamic> _expenseJson({Object? type}) {
       },
     ],
     'date': '2026-08-22T14:30:00Z',
+    'label': label,
   };
   if (type != null) json['type'] = type;
   return json;
@@ -47,6 +48,32 @@ void main() {
       final expense = Expense.fromJson(_expenseJson(type: 'refund'));
 
       expect(expense.type, ExpenseType.expense);
+    });
+  });
+
+  group('Expense.fromJson label', () {
+    test('parses an embedded label', () {
+      final expense = Expense.fromJson(
+        _expenseJson(
+          label: {
+            'id': 'lbl_01h',
+            'groupId': 'grp_01h',
+            'name': 'Food',
+            'color': '#4CB963',
+            'icon': '🍕',
+          },
+        ),
+      );
+
+      expect(expense.label?.id, 'lbl_01h');
+      expect(expense.label?.name, 'Food');
+      expect(expense.label?.icon, '🍕');
+    });
+
+    test('defaults to null when label is absent', () {
+      final expense = Expense.fromJson(_expenseJson());
+
+      expect(expense.label, isNull);
     });
   });
 }
