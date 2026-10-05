@@ -90,6 +90,33 @@ class _RecordingExpenseRepository implements ExpenseRepository {
       _simulateNetworkCall(null);
 }
 
+class _RecordingCreateExpenseRepository implements ExpenseRepository {
+  CreateExpenseInput? lastCreateInput;
+
+  @override
+  Future<List<Expense>> fetchExpenses({int? limit}) => _simulateNetworkCall([]);
+
+  @override
+  Future<List<Expense>> fetchExpensesForGroup(String groupId) =>
+      _simulateNetworkCall([]);
+
+  @override
+  Future<void> addExpense(CreateExpenseInput expense, String groupId) async {
+    lastCreateInput = expense;
+  }
+
+  @override
+  Future<void> addPayment(CreatePaymentInput payment, String groupId) =>
+      _simulateNetworkCall(null);
+
+  @override
+  Future<void> removeExpense(String expenseId) => _simulateNetworkCall(null);
+
+  @override
+  Future<void> updateExpense(Expense updatedExpense) =>
+      _simulateNetworkCall(null);
+}
+
 void main() {
   test(
     'addEvenExpense succeeds when nothing is watching the group\'s '
@@ -176,4 +203,26 @@ void main() {
       expect(state.value, isEmpty);
     },
   );
+
+  test('addEvenExpense forwards repeatMonthly to CreateExpenseInput', () async {
+    final repository = _RecordingCreateExpenseRepository();
+    final container = ProviderContainer(
+      overrides: [expenseRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
+    const groupId = 'group-1';
+    final member = Member(id: 'm1', name: 'Alex');
+
+    await container
+        .read(expensesProvider(groupId).notifier)
+        .addEvenExpense(
+          concept: 'Rent',
+          amount: 1000,
+          paidBy: member,
+          splitBetween: [member],
+          repeatMonthly: true,
+        );
+
+    expect(repository.lastCreateInput!.repeatMonthly, isTrue);
+  });
 }
