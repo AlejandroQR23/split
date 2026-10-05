@@ -29,6 +29,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   String? _payerId;
   final Set<String> _splitMemberIds = {};
   String? _selectedLabelId;
+  bool _repeatMonthly = false;
   bool _submitted = false;
   bool _isSubmitting = false;
 
@@ -87,6 +88,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
             paidBy: payer,
             splitBetween: splitMembers,
             labelId: _selectedLabelId,
+            repeatMonthly: _repeatMonthly,
           );
     } catch (error) {
       if (!mounted) return;
@@ -141,6 +143,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
             ..clear()
             ..addAll(ids);
         }),
+        repeatMonthly: _repeatMonthly,
+        onRepeatMonthlyChanged: (value) =>
+            setState(() => _repeatMonthly = value),
         onSubmit: () => _handleSubmit(groupsResponse.value),
         selectedLabelId: _selectedLabelId,
         onLabelChanged: (labelId) =>

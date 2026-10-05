@@ -24,6 +24,8 @@ class AddExpenseForm extends StatelessWidget {
     required this.onGroupChanged,
     required this.onPayerChanged,
     required this.onSplitMemberIdsChanged,
+    required this.repeatMonthly,
+    required this.onRepeatMonthlyChanged,
     required this.onSubmit,
     this.selectedLabelId,
     required this.onLabelChanged,
@@ -41,6 +43,8 @@ class AddExpenseForm extends StatelessWidget {
   final ValueChanged<String?> onGroupChanged;
   final ValueChanged<String?> onPayerChanged;
   final ValueChanged<Set<String>> onSplitMemberIdsChanged;
+  final bool repeatMonthly;
+  final ValueChanged<bool> onRepeatMonthlyChanged;
   final VoidCallback onSubmit;
   final String? selectedLabelId;
   final ValueChanged<String?> onLabelChanged;
@@ -170,6 +174,15 @@ class AddExpenseForm extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text('Select at least one person', style: fieldErrorStyle),
         ],
+        const SizedBox(height: AppSpacing.lg),
+        ShadSwitch(
+          value: repeatMonthly,
+          onChanged: onRepeatMonthlyChanged,
+          label: const Text('Repeat monthly'),
+          sublabel: const Text(
+            'Automatically add this expense again next month',
+          ),
+        ),
         const SizedBox(height: AppSpacing.xl),
         SizedBox(
           width: double.infinity,
