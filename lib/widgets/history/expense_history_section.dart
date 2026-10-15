@@ -12,6 +12,7 @@ import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
 import '../../utils/network_exception.dart';
 import '../shared/sheet_content_spacer.dart';
+import 'expense_details_sheet.dart';
 import 'expense_tile_content.dart';
 
 class ExpenseHistorySection extends StatefulWidget {
@@ -159,7 +160,13 @@ class _ExpenseHistoryTile extends ConsumerWidget {
       subtitleDetail: formatDate(expense.date),
     );
 
-    if (!expense.isPayment) return content;
+    if (!expense.isPayment) {
+      return GestureDetector(
+        onTap: () =>
+            showExpenseDetailsSheet(context, groupId, expense, currentUser),
+        child: content,
+      );
+    }
 
     final theme = ShadTheme.of(context);
 

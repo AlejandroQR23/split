@@ -70,6 +70,22 @@ class ExpenseTileContent extends StatelessWidget {
       leading = Avatar(name: payerLabel);
     }
 
+    Widget titleWidget = Text(titleText, style: theme.textTheme.large);
+    if (!expense.isPayment && expense.isRecurring) {
+      titleWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(child: titleWidget),
+          const SizedBox(width: AppSpacing.xs),
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedRepeat,
+            size: 14,
+            color: theme.colorScheme.mutedForeground,
+          ),
+        ],
+      );
+    }
+
     return ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
@@ -80,7 +96,7 @@ class ExpenseTileContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(titleText, style: theme.textTheme.large),
+                titleWidget,
                 const SizedBox(height: AppSpacing.xs),
                 Text(subtitleText, style: theme.textTheme.muted),
                 if (expense.label != null) ...[

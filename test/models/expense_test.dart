@@ -1,7 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:split/models/expense.dart';
 
-Map<String, dynamic> _expenseJson({Object? type, Object? label}) {
+Map<String, dynamic> _expenseJson({
+  Object? type,
+  Object? label,
+  Object? recurringExpenseId,
+}) {
   final json = {
     'id': 'exp_01h',
     'groupId': 'grp_01h',
@@ -16,6 +20,7 @@ Map<String, dynamic> _expenseJson({Object? type, Object? label}) {
     ],
     'date': '2026-08-22T14:30:00Z',
     'label': label,
+    'recurringExpenseId': recurringExpenseId,
   };
   if (type != null) json['type'] = type;
   return json;
@@ -74,6 +79,54 @@ void main() {
       final expense = Expense.fromJson(_expenseJson());
 
       expect(expense.label, isNull);
+    });
+  });
+
+  group('Expense.fromJson — recurringExpenseId', () {
+    test('parses a non-null recurringExpenseId and isRecurring is true', () {
+      final expense = Expense.fromJson(
+        _expenseJson(recurringExpenseId: 'rec_01h'),
+      );
+
+      expect(expense.recurringExpenseId, 'rec_01h');
+      expect(expense.isRecurring, isTrue);
+    });
+
+    test('null recurringExpenseId means isRecurring is false', () {
+      final expense = Expense.fromJson(_expenseJson());
+
+      expect(expense.recurringExpenseId, isNull);
+      expect(expense.isRecurring, isFalse);
+    });
+  });
+
+  group('CreateExpenseInput.toJson — repeatMonthly', () {
+    test('includes recurrence when repeatMonthly is true', () {
+      final input = CreateExpenseInput(
+        concept: 'Rent',
+        amount: 1000,
+        paidById: 'mem_01h',
+        shares: const [ExpenseShareInput(memberId: 'mem_01h', amount: 1000)],
+        date: DateTime.utc(2026, 9, 1),
+        repeatMonthly: true,
+      );
+
+      expect(input.toJson()['recurrence'], {
+        'frequency': 'monthly',
+        'interval': 1,
+      });
+    });
+
+    test('omits recurrence when repeatMonthly is false (default)', () {
+      final input = CreateExpenseInput(
+        concept: 'Coffee',
+        amount: 5,
+        paidById: 'mem_01h',
+        shares: const [ExpenseShareInput(memberId: 'mem_01h', amount: 5)],
+        date: DateTime.utc(2026, 9, 1),
+      );
+
+      expect(input.toJson().containsKey('recurrence'), isFalse);
     });
   });
 }

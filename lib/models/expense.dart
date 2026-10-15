@@ -23,9 +23,6 @@ enum ExpenseType {
   expense,
   payment;
 
-  /// Unknown or absent values degrade to [expense] rather than throwing, so
-  /// this client survives a future server-side type it doesn't know about
-  /// yet.
   static ExpenseType fromJson(Object? value) =>
       value == 'payment' ? ExpenseType.payment : ExpenseType.expense;
 }
@@ -48,6 +45,7 @@ class Expense {
     required this.date,
     this.type = ExpenseType.expense,
     this.label,
+    this.recurringExpenseId,
   });
 
   final String id;
@@ -59,8 +57,10 @@ class Expense {
   final DateTime date;
   final ExpenseType type;
   final Label? label;
+  final String? recurringExpenseId;
 
   bool get isPayment => type == ExpenseType.payment;
+  bool get isRecurring => recurringExpenseId != null;
 
   @override
   bool operator ==(Object other) {
@@ -85,6 +85,7 @@ class Expense {
     label: json['label'] == null
         ? null
         : Label.fromJson(json['label'] as Map<String, dynamic>),
+    recurringExpenseId: json['recurringExpenseId'] as String?,
   );
 }
 
@@ -96,6 +97,7 @@ class CreateExpenseInput {
     required this.shares,
     required this.date,
     this.labelId,
+    this.repeatMonthly = false,
   });
 
   final String concept;
@@ -104,6 +106,7 @@ class CreateExpenseInput {
   final List<ExpenseShareInput> shares;
   final DateTime date;
   final String? labelId;
+  final bool repeatMonthly;
 
   Map<String, dynamic> toJson() => {
     'concept': concept,
@@ -112,6 +115,7 @@ class CreateExpenseInput {
     'shares': shares.map((share) => share.toJson()).toList(),
     'date': date.toIso8601String(),
     if (labelId != null) 'labelId': labelId,
+    if (repeatMonthly) 'recurrence': {'frequency': 'monthly', 'interval': 1},
   };
 }
 
