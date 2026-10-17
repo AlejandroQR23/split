@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -22,10 +23,11 @@ Future<void> generateAndShareInvite(
         .read(inviteRepositoryProvider)
         .generateInvite(member.id);
     if (!context.mounted) return;
+    final inviteWebUrl = dotenv.env['INVITE_WEB_URL']!;
     await SharePlus.instance.share(
       ShareParams(
         text:
-            'Join ${member.name} on Split: splitapp://invite/${invite.inviteToken}',
+            'Join ${member.name} on Split: $inviteWebUrl/invite/${invite.inviteToken}',
       ),
     );
   } catch (error) {
