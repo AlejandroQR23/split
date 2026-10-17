@@ -29,6 +29,7 @@ jobs:
         run: |
           missing=()
           [ -z "${{ secrets.API_URL }}" ] && missing+=(API_URL)
+          [ -z "${{ secrets.INVITE_WEB_URL }}" ] && missing+=(INVITE_WEB_URL)
           [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ] && missing+=(GOOGLE_SERVICES_JSON_BASE64)
           [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ] && missing+=(ANDROID_KEYSTORE_BASE64)
           [ -z "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ] && missing+=(ANDROID_KEYSTORE_PASSWORD)
@@ -39,7 +40,9 @@ jobs:
           fi
 
       - name: Create .env
-        run: echo "API_URL=${{ secrets.API_URL }}" > .env
+        run: |
+          echo "API_URL=${{ secrets.API_URL }}" > .env
+          echo "INVITE_WEB_URL=${{ secrets.INVITE_WEB_URL }}" >> .env
 
       - name: Create google-services.json
         run: |
