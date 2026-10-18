@@ -218,7 +218,7 @@ class MyApp extends ConsumerWidget {
 
     return ShadApp.router(
       routerConfig: ref.watch(routerProvider),
-      title: 'Split',
+      title: 'Manu',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       themeMode: ThemeMode.light,
@@ -227,7 +227,7 @@ class MyApp extends ConsumerWidget {
 
   ShadApp _shadApp({required Widget home}) {
     return ShadApp(
-      title: 'Split',
+      title: 'Manu',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       themeMode: ThemeMode.light,

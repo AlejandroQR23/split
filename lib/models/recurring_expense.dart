@@ -49,15 +49,15 @@ class RecurringExpense {
 }
 
 String describeRecurrence(String frequency, int interval) {
-  if (frequency == 'monthly' && interval == 1) return 'Repeats monthly';
+  if (frequency == 'monthly' && interval == 1) return 'Se repite cada mes';
 
-  final unit = switch (frequency) {
-    'daily' => 'day',
-    'weekly' => 'week',
-    'monthly' => 'month',
-    'yearly' => 'year',
-    _ => frequency,
+  final (singular, plural) = switch (frequency) {
+    'daily' => ('día', 'días'),
+    'weekly' => ('semana', 'semanas'),
+    'monthly' => ('mes', 'meses'),
+    'yearly' => ('año', 'años'),
+    _ => (frequency, frequency),
   };
-  final pluralUnit = interval == 1 ? unit : '${unit}s';
-  return 'Repeats every $interval $pluralUnit';
+  final unit = interval == 1 ? singular : plural;
+  return 'Se repite cada $interval $unit';
 }

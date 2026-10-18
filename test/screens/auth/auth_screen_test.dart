@@ -79,7 +79,7 @@ void main() {
     await _pumpAuthScreen(tester, authRepository);
 
     expect(
-      find.descendant(of: _submitButton, matching: find.text('Login')),
+      find.descendant(of: _submitButton, matching: find.text('Entrar')),
       findsOneWidget,
     );
 
@@ -102,7 +102,7 @@ void main() {
     await _pumpAuthScreen(tester, authRepository, initialMode: AuthMode.signUp);
 
     expect(
-      find.descendant(of: _submitButton, matching: find.text('Sign up')),
+      find.descendant(of: _submitButton, matching: find.text('Crear cuenta')),
       findsOneWidget,
     );
 
@@ -125,11 +125,11 @@ void main() {
     // While on the Login tab, 'Sign up' appears exactly once (the inactive
     // tab's own label) — the submit button says 'Login' at this point, so
     // there's no collision to disambiguate here.
-    await tester.tap(find.text('Sign up'));
+    await tester.tap(find.text('Crear cuenta'));
     await tester.pump();
 
     expect(
-      find.descendant(of: _submitButton, matching: find.text('Sign up')),
+      find.descendant(of: _submitButton, matching: find.text('Crear cuenta')),
       findsOneWidget,
     );
   });
@@ -149,7 +149,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Incorrect password.'), findsOneWidget);
+    expect(find.text('Contraseña incorrecta.'), findsOneWidget);
   });
 
   testWidgets(
@@ -176,7 +176,7 @@ void main() {
 
       expect(container.read(pendingInviteTokenProvider), 'inv_test123');
 
-      await tester.tap(find.text('Login'));
+      await tester.tap(find.text('Entrar'));
       await tester.pump();
 
       expect(container.read(pendingInviteTokenProvider), isNull);

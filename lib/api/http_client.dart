@@ -48,7 +48,7 @@ class HttpClient extends ApiHttpClient {
     } catch (_) {
       await _authRepository.signOut();
       throw NetworkException(
-        APIError(message: 'Session expired', code: 'unauthenticated'),
+        APIError(message: 'Tu sesión expiró', code: 'unauthenticated'),
         401,
       );
     }
@@ -56,7 +56,7 @@ class HttpClient extends ApiHttpClient {
     if (retried.statusCode == 401) {
       await _authRepository.signOut();
       throw NetworkException(
-        APIError(message: 'Session expired', code: 'unauthenticated'),
+        APIError(message: 'Tu sesión expiró', code: 'unauthenticated'),
         401,
       );
     }

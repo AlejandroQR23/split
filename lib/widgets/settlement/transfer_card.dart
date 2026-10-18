@@ -10,6 +10,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
 import '../../utils/invite_share.dart';
+import '../../utils/member_label.dart';
 import '../shared/avatar.dart';
 
 class TransferCard extends ConsumerWidget {
@@ -47,8 +48,8 @@ class TransferCard extends ConsumerWidget {
         : youAreOwed
         ? theme.colorScheme.primary
         : theme.colorScheme.foreground;
-    final fromName = youOwe ? 'You' : fromMember.name;
-    final toName = youAreOwed ? 'You' : toMember.name;
+    final fromName = subjectLabel(fromMember, currentUser: currentUser);
+    final toName = objectLabel(toMember, currentUser: currentUser);
 
     final card = ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -89,7 +90,7 @@ class TransferCard extends ConsumerWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('Settle up'),
+                          const Text('A manu'),
                           const SizedBox(width: AppSpacing.xs),
                           HugeIcon(
                             icon: HugeIcons.strokeRoundedArrowRight01,
@@ -100,13 +101,13 @@ class TransferCard extends ConsumerWidget {
                       ),
                     )
                   else
-                    const ShadBadge.secondary(child: Text('Pending')),
+                    const ShadBadge.secondary(child: Text('Pendiente')),
                 ],
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text('$fromName to $toName', style: theme.textTheme.large),
+          Text('$fromName a $toName', style: theme.textTheme.large),
           if (canInvite && (fromMember.isGhost || toMember.isGhost)) ...[
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -122,7 +123,7 @@ class TransferCard extends ConsumerWidget {
                     ),
                     onPressed: () =>
                         generateAndShareInvite(context, ref, fromMember),
-                    child: Text('Invite ${fromMember.name}'),
+                    child: Text('Invitar a ${fromMember.name}'),
                   ),
                 if (toMember.isGhost)
                   ShadButton.ghost(
@@ -133,7 +134,7 @@ class TransferCard extends ConsumerWidget {
                     ),
                     onPressed: () =>
                         generateAndShareInvite(context, ref, toMember),
-                    child: Text('Invite ${toMember.name}'),
+                    child: Text('Invitar a ${toMember.name}'),
                   ),
               ],
             ),

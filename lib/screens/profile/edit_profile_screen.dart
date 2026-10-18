@@ -21,14 +21,14 @@ class EditProfileScreen extends ConsumerWidget {
       child: SafeArea(
         child: Column(
           children: [
-            const ScreenHeader(title: 'Edit Profile'),
+            const ScreenHeader(title: 'Editar perfil'),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 children: [
                   NameForm(
                     initialName: member.name,
-                    submitLabel: 'Save Changes',
+                    submitLabel: 'Guardar cambios',
                     onSaved: () => context.pop(),
                   ),
                 ],

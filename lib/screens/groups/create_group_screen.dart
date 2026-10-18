@@ -35,7 +35,7 @@ class _CreateGroupScreenState extends GroupFormScreenState<CreateGroupScreen> {
   }
 
   @override
-  String get errorToastTitle => 'Could not create group';
+  String get errorToastTitle => 'No se pudo crear el grupo';
 
   @override
   Future<void> onSubmit(String name, List<String> newMemberNames) async {
@@ -64,21 +64,21 @@ class _CreateGroupScreenState extends GroupFormScreenState<CreateGroupScreen> {
       memberControllers: memberControllers,
       onAddMemberField: addMemberField,
       onRemoveMemberField: removeMemberField,
-      membersHint: "You're added automatically — invite others by name.",
+      membersHint: 'Tú ya estás dentro — invita a otros por su nombre.',
     );
 
     if (widget.isFirstGroup) {
       return buildScreen(
-        title: 'Create your first group',
+        title: 'Crea tu primer grupo',
         showBackButton: false,
         body: buildFormWithPinnedSubmit(
           form: form,
-          submitLabel: 'Create group',
+          submitLabel: 'Crear grupo',
           extraFooterActions: [
             const SizedBox(height: AppSpacing.sm),
             ShadButton.ghost(
               onPressed: () => context.go('/'),
-              child: const Text('Skip for now'),
+              child: const Text('Omitir por ahora'),
             ),
           ],
         ),
@@ -86,9 +86,9 @@ class _CreateGroupScreenState extends GroupFormScreenState<CreateGroupScreen> {
     }
 
     return buildSheet(
-      title: 'New group',
+      title: 'Nuevo grupo',
       form: form,
-      submitLabel: 'Create group',
+      submitLabel: 'Crear grupo',
     );
   }
 }

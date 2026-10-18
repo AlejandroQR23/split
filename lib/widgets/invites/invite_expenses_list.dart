@@ -16,7 +16,10 @@ class InviteExpensesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     if (expenses.isEmpty) {
-      return Text('No expenses logged yet.', style: theme.textTheme.muted);
+      return Text(
+        'Aún no hay gastos registrados.',
+        style: theme.textTheme.muted,
+      );
     }
 
     final sorted = expenses.toList()..sort((a, b) => b.date.compareTo(a.date));

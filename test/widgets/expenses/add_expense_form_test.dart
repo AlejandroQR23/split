@@ -47,7 +47,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Repeat monthly'), findsOneWidget);
+    expect(find.text('Repetir cada mes'), findsOneWidget);
 
     await tester.tap(find.byType(ShadSwitch));
     await tester.pump();

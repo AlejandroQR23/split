@@ -22,7 +22,10 @@ class HomeScreen extends ConsumerWidget {
       decoration: const BoxDecoration(color: AppColors.background),
       child: Column(
         children: [
-          ScreenHeader(title: 'Hi, ${currentUser.name}', isMainScreen: true),
+          ScreenHeader(
+            title: 'Hola, ${currentUser.name}',
+            isMainScreen: true,
+          ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.only(

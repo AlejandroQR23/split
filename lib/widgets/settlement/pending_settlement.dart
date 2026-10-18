@@ -48,12 +48,14 @@ class _PendingSettlementsSectionState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Pending settlements', style: theme.textTheme.h4),
+            Text('Pendientes por quedar a manu', style: theme.textTheme.h4),
             ShadBadge.secondary(
               child: Text(
                 widget.transfers.isEmpty
-                    ? 'All settled'
-                    : '${widget.transfers.length} pending',
+                    ? 'A manu'
+                    : widget.transfers.length == 1
+                    ? '1 pendiente'
+                    : '${widget.transfers.length} pendientes',
               ),
             ),
           ],
@@ -101,10 +103,10 @@ class _EmptySettlementsState extends StatelessWidget {
             size: 32,
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text("You're all settled up", style: theme.textTheme.large),
+          Text('Ya quedaron a manu', style: theme.textTheme.large),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'No pending settlements in this group.',
+            'No hay pendientes por quedar a manu en este grupo.',
             style: theme.textTheme.muted,
           ),
         ],

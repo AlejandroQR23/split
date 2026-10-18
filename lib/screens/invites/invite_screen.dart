@@ -31,17 +31,17 @@ class InviteScreen extends ConsumerWidget {
         child: previewAsync.when(
           loading: () => const _InviteLoading(),
           error: (error, stackTrace) => const _InviteInvalidState(
-            message: "This invite link isn't valid.",
+            message: 'Este enlace de invitación no es válido.',
           ),
           data: (preview) {
             if (preview.expired) {
               return const _InviteInvalidState(
-                message: 'This invite has expired — ask for a new link.',
+                message: 'Esta invitación ya expiró — pide un enlace nuevo.',
               );
             }
             if (preview.claimed) {
               return const _InviteInvalidState(
-                message: 'This invite has already been used.',
+                message: 'Esta invitación ya fue usada.',
               );
             }
             return _InviteContent(token: token, preview: preview);
@@ -119,10 +119,10 @@ class _InviteContent extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("You're invited", style: AppTypography.screenTitle),
+              Text('Te invitaron', style: AppTypography.screenTitle),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                "Browsing ${preview.memberName}'s groups.",
+                'Viendo los grupos de ${preview.memberName}.',
                 style: theme.textTheme.muted,
               ),
             ],
@@ -135,8 +135,8 @@ class _InviteContent extends ConsumerWidget {
               message:
                   error is NetworkException &&
                       error.error.code == 'unauthenticated'
-                  ? 'This invite has expired — ask for a new link.'
-                  : "This invite link isn't valid.",
+                  ? 'Esta invitación ya expiró — pide un enlace nuevo.'
+                  : 'Este enlace de invitación no es válido.',
             ),
             data: (groups) => InviteGroupsList(
               token: token,
@@ -176,19 +176,19 @@ class _InviteClaimCta extends ConsumerWidget {
         return ShadSheet(
           useSafeArea: false,
           padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-          title: const Text('Join with this account?'),
+          title: const Text('¿Unirte con esta cuenta?'),
           description: Text(
-            "This merges ${preview.memberName}'s expense history into "
-            '$email and adds you to their group(s).',
+            'Esto combina el historial de gastos de ${preview.memberName} con '
+            '$email y te agrega a su(s) grupo(s).',
           ),
           actions: [
             ShadButton.outline(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             ShadButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Join'),
+              child: const Text('Unirme'),
             ),
           ],
           child: sheetContentSpacer,
@@ -207,7 +207,7 @@ class _InviteClaimCta extends ConsumerWidget {
           : error.toString();
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not join'),
+          title: const Text('No se pudo unir'),
           description: Text(message),
         ),
       );
@@ -237,7 +237,7 @@ class _InviteClaimCta extends ConsumerWidget {
             ? _joinWithThisAccount(context, ref)
             : _createAccountToJoin(context, ref),
         child: Text(
-          isSignedIn ? 'Join with this account' : 'Create account to join',
+          isSignedIn ? 'Unirme con esta cuenta' : 'Crear cuenta para unirte',
         ),
       ),
     );

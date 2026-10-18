@@ -26,7 +26,7 @@ class ProfileScreen extends ConsumerWidget {
       decoration: const BoxDecoration(color: AppColors.background),
       child: Column(
         children: [
-          const ScreenHeader(title: 'Profile', isMainScreen: true),
+          const ScreenHeader(title: 'Perfil', isMainScreen: true),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.only(
@@ -49,7 +49,7 @@ class ProfileScreen extends ConsumerWidget {
                         width: double.infinity,
                         child: ShadButton(
                           onPressed: () => context.push('/profile/edit'),
-                          child: const Text('Edit Profile'),
+                          child: const Text('Editar perfil'),
                         ),
                       ),
                     ],
@@ -65,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
                       icon: HugeIcons.strokeRoundedLogout01,
                     ),
                     onPressed: () => ref.read(authRepositoryProvider).signOut(),
-                    child: const Text('Sign Out'),
+                    child: const Text('Cerrar sesión'),
                   ),
                 ),
               ],
@@ -99,10 +99,10 @@ class _InviteFriendsCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Invite your friends', style: theme.textTheme.h4),
+                  Text('Invita a tus amigos', style: theme.textTheme.h4),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Share Split with the people you owe.',
+                    'Comparte Manu y queden a manu.',
                     style: theme.textTheme.muted,
                   ),
                 ],

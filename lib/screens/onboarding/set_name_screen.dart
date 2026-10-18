@@ -32,14 +32,14 @@ class SetNameScreen extends ConsumerWidget {
             AppSpacing.xxxl,
           ),
           children: [
-            Text('What should we call you?', style: AppTypography.screenTitle),
+            Text('¿Cómo te llamamos?', style: AppTypography.screenTitle),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'This is the name your group-mates will see.',
+              'Así te verán tus compañeros de grupo.',
               style: theme.textTheme.muted,
             ),
             const SizedBox(height: AppSpacing.xl),
-            const NameForm(submitLabel: 'Continue'),
+            const NameForm(submitLabel: 'Continuar'),
           ],
         ),
       ),

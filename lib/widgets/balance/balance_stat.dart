@@ -77,7 +77,7 @@ class BalanceSummaryCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Your balance', style: theme.textTheme.muted),
+              Text('Tu saldo', style: theme.textTheme.muted),
               const SizedBox(height: AppSpacing.xs),
               AnimatedAmountText(
                 amount: net,
@@ -89,14 +89,14 @@ class BalanceSummaryCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: BalanceStat(
-                      label: 'You owe',
+                      label: 'Debes',
                       amount: youOwe,
                       color: theme.colorScheme.destructive,
                     ),
                   ),
                   Expanded(
                     child: BalanceStat(
-                      label: "You're owed",
+                      label: 'Te deben',
                       amount: youAreOwed,
                       color: theme.colorScheme.primary,
                     ),
@@ -113,7 +113,7 @@ class BalanceSummaryCard extends ConsumerWidget {
                       size: 16,
                     ),
                     onPressed: onAddExpense,
-                    child: const Text('Add expense'),
+                    child: const Text('Agregar gasto'),
                   ),
                 ),
               ],

@@ -24,7 +24,7 @@ class EditGroupScreen extends ConsumerStatefulWidget {
 
 class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
   @override
-  String get errorToastTitle => 'Could not save group';
+  String get errorToastTitle => 'No se pudo guardar el grupo';
 
   @override
   Future<void> onSubmit(String name, List<String> newMemberNames) async {
@@ -42,7 +42,9 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
         .editGroup(group: group, name: name, addedMemberIds: addedMemberIds);
 
     if (!mounted) return;
-    ShadToaster.of(context).show(const ShadToast(title: Text('Group updated')));
+    ShadToaster.of(
+      context,
+    ).show(const ShadToast(title: Text('Grupo actualizado')));
     context.pop();
   }
 
@@ -51,7 +53,7 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
     return ShadSheet(
       useSafeArea: false,
       padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-      title: const Text('Edit group'),
+      title: const Text('Editar grupo'),
       child: SizedBox(height: 160, child: child),
     );
   }
@@ -74,22 +76,22 @@ class _EditGroupScreenState extends GroupFormScreenState<EditGroupScreen> {
         if (group == null) {
           return _skeletonSheet(
             context,
-            const AsyncErrorText(error: 'Group not found'),
+            const AsyncErrorText(error: 'Grupo no encontrado'),
           );
         }
 
         return buildSheet(
-          title: 'Edit group',
+          title: 'Editar grupo',
           form: GroupForm(
             formKey: formKey,
             memberControllers: memberControllers,
             onAddMemberField: addMemberField,
             onRemoveMemberField: removeMemberField,
-            membersHint: 'Invite more people by name.',
+            membersHint: 'Invita a más personas por su nombre.',
             initialName: group.name,
             existingMembers: group.members,
           ),
-          submitLabel: 'Save changes',
+          submitLabel: 'Guardar cambios',
         );
       },
     );

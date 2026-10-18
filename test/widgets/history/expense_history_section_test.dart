@@ -114,12 +114,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Groceries'), findsWidgets);
-      expect(find.text('Sep 1, 2026'), findsOneWidget);
-      expect(find.text('Paid by You'), findsOneWidget);
-      expect(find.text('Split equally among 2 people'), findsOneWidget);
+      expect(find.text('1 sep 2026'), findsOneWidget);
+      expect(find.text('Pagaste tú'), findsOneWidget);
+      expect(find.text('Dividido en partes iguales entre 2 personas'), findsOneWidget);
       expect(find.textContaining('Bob'), findsOneWidget);
-      expect(find.text('Pause'), findsNothing);
-      expect(find.text('Resume'), findsNothing);
+      expect(find.text('Pausar'), findsNothing);
+      expect(find.text('Reanudar'), findsNothing);
     },
   );
 
@@ -147,8 +147,8 @@ void main() {
       await tester.tap(find.text('Rent').first);
       await tester.pumpAndSettle();
 
-      expect(find.text('Repeats monthly'), findsOneWidget);
-      expect(find.text('Pause'), findsOneWidget);
+      expect(find.text('Se repite cada mes'), findsOneWidget);
+      expect(find.text('Pausar'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) =>
@@ -157,11 +157,11 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text('Pause'));
+      await tester.tap(find.text('Pausar'));
       await tester.pumpAndSettle();
 
       expect(repository.active, isFalse);
-      expect(find.text('Resume'), findsOneWidget);
+      expect(find.text('Reanudar'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) =>
@@ -171,8 +171,8 @@ void main() {
       );
       // The sheet stays open after a successful toggle, and the recurrence
       // label now flags the paused state.
-      expect(find.text('Repeats monthly (paused)'), findsOneWidget);
-      expect(find.text('Repeats monthly'), findsNothing);
+      expect(find.text('Se repite cada mes (pausado)'), findsOneWidget);
+      expect(find.text('Se repite cada mes'), findsNothing);
     },
   );
 
@@ -204,7 +204,7 @@ void main() {
 
       expect(find.textContaining('network down'), findsOneWidget);
       expect(find.byType(ShadToast), findsNothing);
-      expect(find.text('Pause'), findsNothing);
+      expect(find.text('Pausar'), findsNothing);
     },
   );
 
@@ -235,10 +235,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Could not find this recurring expense.'),
+        find.text('No se encontró este gasto recurrente.'),
         findsOneWidget,
       );
-      expect(find.text('Pause'), findsNothing);
+      expect(find.text('Pausar'), findsNothing);
     },
   );
 
@@ -259,7 +259,7 @@ void main() {
     await tester.pumpWidget(_wrap(expenses: [payment]));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('You paid Bob'));
+    await tester.tap(find.text('Tú le pagaste a Bob'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ShadSheet), findsNothing);

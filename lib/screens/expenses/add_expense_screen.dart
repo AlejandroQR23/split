@@ -95,7 +95,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       setState(() => _isSubmitting = false);
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not save expense'),
+          title: const Text('No se pudo guardar el gasto'),
           description: Text('$error'),
         ),
       );
@@ -158,7 +158,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            const ScreenHeader(title: 'Add expense'),
+            const ScreenHeader(title: 'Agregar gasto'),
             Expanded(child: body),
           ],
         ),

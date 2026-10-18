@@ -43,7 +43,7 @@ void main() {
     );
 
     expect(
-      find.text('This invite has expired — ask for a new link.'),
+      find.text('Esta invitación ya expiró — pide un enlace nuevo.'),
       findsOneWidget,
     );
   });
@@ -60,7 +60,7 @@ void main() {
         ),
       );
 
-      expect(find.text('This invite has already been used.'), findsOneWidget);
+      expect(find.text('Esta invitación ya fue usada.'), findsOneWidget);
     },
   );
 
@@ -72,7 +72,7 @@ void main() {
       fetchPreview: () => Future<InvitePreview>.error(Exception('not found')),
     );
 
-    expect(find.text("This invite link isn't valid."), findsOneWidget);
+    expect(find.text('Este enlace de invitación no es válido.'), findsOneWidget);
   });
 
   testWidgets(
@@ -117,8 +117,8 @@ void main() {
       // The transfer involves Bob (the invited member), so it still renders
       // as "Pending" — just without a "Settle up" tap target, since the
       // guest viewer never matches either side of the transfer.
-      expect(find.text('Pending'), findsOneWidget);
-      expect(find.text('Settle up'), findsNothing);
+      expect(find.text('Pendiente'), findsOneWidget);
+      expect(find.text('A manu'), findsNothing);
     },
   );
 
@@ -208,13 +208,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text("Bob's balance"), findsOneWidget);
-      expect(find.text('Owes'), findsOneWidget);
-      expect(find.text('Is owed'), findsOneWidget);
+      expect(find.text('Saldo de Bob'), findsOneWidget);
+      expect(find.text('Debe'), findsOneWidget);
+      expect(find.text('Le deben'), findsOneWidget);
 
-      expect(find.text('1 pending'), findsOneWidget);
-      expect(find.text('Alice to Bob'), findsOneWidget);
-      expect(find.text('Alice to Carol'), findsNothing);
+      expect(find.text('1 pendiente'), findsOneWidget);
+      expect(find.text('Alice a Bob'), findsOneWidget);
+      expect(find.text('Alice a Carol'), findsNothing);
     },
   );
 
@@ -257,8 +257,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text("Sam Lee's balance"), findsOneWidget);
-      expect(find.text('All settled'), findsOneWidget);
+      expect(find.text('Saldo de Sam Lee'), findsOneWidget);
+      expect(find.text('A manu'), findsOneWidget);
     },
   );
 
@@ -303,7 +303,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Create account to join'));
+      await tester.tap(find.text('Crear cuenta para unirte'));
       await tester.pumpAndSettle();
 
       expect(find.text('Sign up screen'), findsOneWidget);

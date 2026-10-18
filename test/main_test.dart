@@ -171,7 +171,7 @@ void main() {
       await tester.pump();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('Hi, Sam Lee'), findsOneWidget);
+      expect(find.text('Hola, Sam Lee'), findsOneWidget);
     },
   );
 
@@ -190,6 +190,6 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Welcome back!'), findsOneWidget);
+    expect(find.text('¡Hola de nuevo!'), findsOneWidget);
   });
 }

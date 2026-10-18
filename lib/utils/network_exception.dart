@@ -7,7 +7,7 @@ class APIError {
 
   factory APIError.fromJson(Map<String, dynamic> json) {
     return APIError(
-      message: json['message'] ?? 'Unknown error',
+      message: json['message'] ?? 'Ocurrió un error',
       code: json['code'] ?? 'unknown_error',
       details: json['details'],
     );

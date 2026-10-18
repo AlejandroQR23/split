@@ -22,7 +22,7 @@ class InviteGroupsList extends StatelessWidget {
     if (groups.isEmpty) {
       return Center(
         child: Text(
-          'Not in any groups yet.',
+          'Aún no hay grupos para mostrar.',
           style: ShadTheme.of(context).textTheme.muted,
         ),
       );

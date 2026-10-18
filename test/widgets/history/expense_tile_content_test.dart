@@ -7,6 +7,7 @@ import 'package:split/models/member.dart';
 import 'package:split/widgets/history/expense_tile_content.dart';
 
 const _payer = Member(id: 'mem_01h', name: 'Alice');
+const _other = Member(id: 'mem_02h', name: 'Bob');
 
 Expense _expense({String? recurringExpenseId}) => Expense(
   id: 'exp_01h',
@@ -20,6 +21,42 @@ Expense _expense({String? recurringExpenseId}) => Expense(
 );
 
 void main() {
+  testWidgets('says "Pagado por ti" when the current user paid, not "Tú"', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ShadApp(
+        home: Scaffold(
+          body: ExpenseTileContent(
+            expense: _expense(),
+            currentUser: _payer,
+            subtitleDetail: 'Sep 1',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Pagado por ti · Sep 1'), findsOneWidget);
+  });
+
+  testWidgets('says "Pagado por <name>" when someone else paid', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ShadApp(
+        home: Scaffold(
+          body: ExpenseTileContent(
+            expense: _expense(),
+            currentUser: _other,
+            subtitleDetail: 'Sep 1',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Pagado por Alice · Sep 1'), findsOneWidget);
+  });
+
   testWidgets('shows no recurring icon for a non-recurring expense', (
     tester,
   ) async {

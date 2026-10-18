@@ -27,7 +27,7 @@ class GroupListScreen extends ConsumerWidget {
       child: Column(
         children: [
           ScreenHeader(
-            title: 'Your groups',
+            title: 'Tus grupos',
             isMainScreen: true,
             trailing: ShadIconButton(
               icon: const HugeIcon(icon: HugeIcons.strokeRoundedPlusSign),
@@ -43,7 +43,10 @@ class GroupListScreen extends ConsumerWidget {
               data: (groups) {
                 if (groups.isEmpty) {
                   return Center(
-                    child: Text('No groups yet.', style: theme.textTheme.muted),
+                    child: Text(
+                      'Aún no tienes grupos.',
+                      style: theme.textTheme.muted,
+                    ),
                   );
                 }
 
@@ -99,7 +102,7 @@ class _GroupCard extends StatelessWidget {
       child: ShadCard(
         title: Text(group.name, style: theme.textTheme.h4),
         description: Text(
-          memberCount == 1 ? '1 member' : '$memberCount members',
+          memberCount == 1 ? '1 integrante' : '$memberCount integrantes',
         ),
         child: Padding(
           padding: const EdgeInsets.only(top: AppSpacing.sm),

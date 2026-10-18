@@ -53,7 +53,7 @@ class InviteBalanceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("$memberName's balance", style: theme.textTheme.muted),
+          Text('Saldo de $memberName', style: theme.textTheme.muted),
           const SizedBox(height: AppSpacing.xs),
           AnimatedAmountText(
             amount: net,
@@ -65,14 +65,14 @@ class InviteBalanceCard extends StatelessWidget {
             children: [
               Expanded(
                 child: BalanceStat(
-                  label: 'Owes',
+                  label: 'Debe',
                   amount: owes,
                   color: theme.colorScheme.destructive,
                 ),
               ),
               Expanded(
                 child: BalanceStat(
-                  label: 'Is owed',
+                  label: 'Le deben',
                   amount: isOwed,
                   color: theme.colorScheme.primary,
                 ),

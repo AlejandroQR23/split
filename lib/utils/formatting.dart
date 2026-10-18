@@ -3,18 +3,18 @@ import 'package:flutter/widgets.dart' show Color;
 import 'package:split/theme/app_colors.dart';
 
 const _monthAbbreviations = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
 ];
 
 String formatAmount(double amount) {
@@ -31,7 +31,7 @@ String formatAmount(double amount) {
 }
 
 String formatDate(DateTime date) =>
-    '${_monthAbbreviations[date.month - 1]} ${date.day}, ${date.year}';
+    '${date.day} ${_monthAbbreviations[date.month - 1]} ${date.year}';
 
 /// Fallback used when a server-sent label color fails to parse — one bad
 /// label shouldn't crash the whole expense list.

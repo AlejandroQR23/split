@@ -76,7 +76,12 @@ class _CreateLabelSheetState extends ConsumerState<CreateLabelSheet> {
           : error.toString();
       ShadToaster.of(
         context,
-      ).show(ShadToast.destructive(title: const Text('Could not create label'), description: Text(message)));
+      ).show(
+        ShadToast.destructive(
+          title: const Text('No se pudo crear la etiqueta'),
+          description: Text(message),
+        ),
+      );
     }
   }
 
@@ -88,11 +93,11 @@ class _CreateLabelSheetState extends ConsumerState<CreateLabelSheet> {
     return ShadSheet(
       useSafeArea: false,
       padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-      title: const Text('New label'),
+      title: const Text('Nueva etiqueta'),
       actions: [
         ShadButton.outline(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         ShadButton(
           onPressed: _isSubmitting ? null : _handleSubmit,
@@ -105,7 +110,7 @@ class _CreateLabelSheetState extends ConsumerState<CreateLabelSheet> {
                     color: theme.colorScheme.primaryForeground,
                   ),
                 )
-              : const Text('Create'),
+              : const Text('Crear'),
         ),
       ],
       child: ShadForm(
@@ -116,10 +121,10 @@ class _CreateLabelSheetState extends ConsumerState<CreateLabelSheet> {
           children: [
             ShadInputFormField(
               id: 'name',
-              label: const Text('Name'),
-              placeholder: const Text('Food, Rent, Transport…'),
+              label: const Text('Nombre'),
+              placeholder: const Text('Comida, Renta, Transporte…'),
               validator: (v) {
-                if (v.trim().isEmpty) return 'Enter a name';
+                if (v.trim().isEmpty) return 'Ingresa un nombre';
                 return null;
               },
             ),
@@ -151,7 +156,7 @@ class _CreateLabelSheetState extends ConsumerState<CreateLabelSheet> {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Icon', style: theme.textTheme.muted),
+            Text('Ícono', style: theme.textTheme.muted),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.sm,

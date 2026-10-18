@@ -65,10 +65,10 @@ class _RecentActivitySectionState
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Recent activity', style: theme.textTheme.h4),
+                Text('Actividad reciente', style: theme.textTheme.h4),
                 const SizedBox(height: AppSpacing.lg),
                 if (expenses.isEmpty)
-                  Text('No activity yet.', style: theme.textTheme.muted)
+                  Text('Aún no hay actividad.', style: theme.textTheme.muted)
                 else
                   StaggeredRevealItems(
                     animation: animationController,
@@ -79,7 +79,7 @@ class _RecentActivitySectionState
                           item: RecentActivityItem(
                             expense: expense,
                             groupName:
-                                groups[expense.groupId] ?? 'Unknown group',
+                                groups[expense.groupId] ?? 'Grupo desconocido',
                           ),
                           currentUser: widget.currentUser,
                         ),
@@ -98,7 +98,7 @@ class _RecentActivitySectionState
           error: (error, stackTrace) {
             return Center(
               child: Text(
-                'Error loading expenses',
+                'No se pudieron cargar los gastos',
                 style: theme.textTheme.muted,
               ),
             );

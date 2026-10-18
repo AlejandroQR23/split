@@ -27,7 +27,7 @@ Future<void> generateAndShareInvite(
     await SharePlus.instance.share(
       ShareParams(
         text:
-            'Join ${member.name} on Split: $inviteWebUrl/invite/${invite.inviteToken}',
+            'Únete a ${member.name} en Manu: $inviteWebUrl/invite/${invite.inviteToken}',
       ),
     );
   } catch (error) {
@@ -37,7 +37,7 @@ Future<void> generateAndShareInvite(
         : error.toString();
     ShadToaster.of(context).show(
       ShadToast.destructive(
-        title: const Text('Could not create invite'),
+        title: const Text('No se pudo crear la invitación'),
         description: Text(message),
       ),
     );

@@ -37,7 +37,7 @@ class _GroupMembersSectionState extends ConsumerState<GroupMembersSection> {
           onTap: () => setState(() => _expanded = !_expanded),
           child: Row(
             children: [
-              Text('Members', style: theme.textTheme.h4),
+              Text('Integrantes', style: theme.textTheme.h4),
               const SizedBox(width: AppSpacing.md),
               AvatarStack(members: widget.members),
               const Spacer(),
@@ -80,7 +80,7 @@ class _GroupMembersSectionState extends ConsumerState<GroupMembersSection> {
                               ),
                               if (member.isGhost) ...[
                                 const ShadBadge.secondary(
-                                  child: Text('Ghost'),
+                                  child: Text('Fantasma'),
                                 ),
                                 const SizedBox(width: AppSpacing.xs),
                                 ShadIconButton.ghost(

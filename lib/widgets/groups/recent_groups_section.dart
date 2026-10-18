@@ -47,16 +47,16 @@ class RecentGroupsSection extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Your groups', style: theme.textTheme.h4),
+                Text('Tus grupos', style: theme.textTheme.h4),
                 ShadButton.link(
                   onPressed: () => context.go('/groups'),
-                  child: const Text('See all'),
+                  child: const Text('Ver todos'),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
             if (groups.isEmpty)
-              Text('No active groups yet.', style: theme.textTheme.muted)
+              Text('Aún no tienes grupos activos.', style: theme.textTheme.muted)
             else
               Column(
                 spacing: AppSpacing.md,
