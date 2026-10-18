@@ -11,6 +11,7 @@ import '../../providers/expenses_provider.dart';
 import '../../providers/groups_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../utils/member_label.dart';
 import '../../utils/network_exception.dart';
 import '../../widgets/shared/async_error_text.dart';
 import '../../widgets/shared/avatar.dart';
@@ -169,9 +170,9 @@ class _SettleUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final fromLabel = fromMember.id == currentUser.id ? 'Tú' : fromMember.name;
+    final fromLabel = subjectLabel(fromMember, currentUser: currentUser);
     final toIsMe = toMember.id == currentUser.id;
-    final toLabel = toIsMe ? 'Tú' : toMember.name;
+    final toLabel = objectLabel(toMember, currentUser: currentUser);
     final paysVerb = fromMember.id == currentUser.id ? 'le pagas a' : 'le paga a';
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 

@@ -10,6 +10,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
 import '../../utils/invite_share.dart';
+import '../../utils/member_label.dart';
 import '../shared/avatar.dart';
 
 class TransferCard extends ConsumerWidget {
@@ -47,8 +48,8 @@ class TransferCard extends ConsumerWidget {
         : youAreOwed
         ? theme.colorScheme.primary
         : theme.colorScheme.foreground;
-    final fromName = youOwe ? 'Tú' : fromMember.name;
-    final toName = youAreOwed ? 'Tú' : toMember.name;
+    final fromName = subjectLabel(fromMember, currentUser: currentUser);
+    final toName = objectLabel(toMember, currentUser: currentUser);
 
     final card = ShadCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -106,10 +107,7 @@ class TransferCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            '$fromName a ${youAreOwed ? 'ti' : toName}',
-            style: theme.textTheme.large,
-          ),
+          Text('$fromName a $toName', style: theme.textTheme.large),
           if (canInvite && (fromMember.isGhost || toMember.isGhost)) ...[
             const SizedBox(height: AppSpacing.sm),
             Wrap(

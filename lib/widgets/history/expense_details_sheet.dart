@@ -10,6 +10,7 @@ import '../../models/recurring_expense.dart';
 import '../../providers/recurring_expenses_provider.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
+import '../../utils/member_label.dart';
 import '../../utils/network_exception.dart';
 import '../shared/async_error_text.dart';
 import '../shared/sheet_content_spacer.dart';
@@ -49,7 +50,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
   final Member currentUser;
 
   String _nameFor(Member member) =>
-      member.id == currentUser.id ? 'Tú' : member.name;
+      subjectLabel(member, currentUser: currentUser);
 
   Future<void> _togglePause(
     BuildContext context,

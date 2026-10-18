@@ -7,6 +7,7 @@ import '../../models/member.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/formatting.dart';
+import '../../utils/member_label.dart';
 import '../shared/avatar.dart';
 
 /// The shared card layout for one [Expense] row in a history/activity list:
@@ -40,9 +41,7 @@ class ExpenseTileContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final payerLabel = expense.paidBy.id == currentUser.id
-        ? 'You'
-        : expense.paidBy.name;
+    final payerLabel = subjectLabel(expense.paidBy, currentUser: currentUser);
 
     final String titleText;
     final String subtitleText;
@@ -50,9 +49,15 @@ class ExpenseTileContent extends StatelessWidget {
     final Widget leading;
     if (expense.isPayment) {
       final toMember = expense.shares.first.member;
-      final toLabel = toMember.id == currentUser.id ? 'You' : toMember.name;
-      titleText = '$payerLabel paid $toLabel';
-      subtitleText = 'Settle up · $subtitleDetail';
+      final toIsMe = toMember.id == currentUser.id;
+      final toLabel = objectLabel(toMember, currentUser: currentUser);
+      final paidVerb = expense.paidBy.id == currentUser.id
+          ? 'le pagaste a'
+          : 'le pagó a';
+      titleText = toIsMe
+          ? '$payerLabel te pagó'
+          : '$payerLabel $paidVerb $toLabel';
+      subtitleText = 'Pago a manu · $subtitleDetail';
       amountColor = theme.colorScheme.primary;
       leading = CircleAvatar(
         radius: 18,
@@ -65,7 +70,8 @@ class ExpenseTileContent extends StatelessWidget {
       );
     } else {
       titleText = expense.concept;
-      subtitleText = 'Paid by $payerLabel · $subtitleDetail';
+      final paidByLabel = objectLabel(expense.paidBy, currentUser: currentUser);
+      subtitleText = 'Pagado por $paidByLabel · $subtitleDetail';
       amountColor = theme.colorScheme.foreground;
       leading = Avatar(name: payerLabel);
     }
