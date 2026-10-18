@@ -32,8 +32,8 @@ void main() {
     await tester.tap(find.text('Sign in'));
     await tester.pump();
 
-    expect(find.text('Enter your email'), findsOneWidget);
-    expect(find.text('Enter your password'), findsOneWidget);
+    expect(find.text('Ingresa tu correo'), findsOneWidget);
+    expect(find.text('Ingresa tu contraseña'), findsOneWidget);
   });
 
   testWidgets('renders a passed-in password error', (tester) async {

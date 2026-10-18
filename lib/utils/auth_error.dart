@@ -14,22 +14,24 @@ AuthFieldError mapFirebaseAuthErrorCode(String code) {
   switch (code) {
     case 'wrong-password':
     case 'invalid-credential':
-      return const AuthFieldError(password: 'Incorrect password.');
+      return const AuthFieldError(password: 'Contraseña incorrecta.');
     case 'user-not-found':
-      return const AuthFieldError(email: 'No account found with this email.');
+      return const AuthFieldError(
+        email: 'No encontramos ninguna cuenta con ese correo.',
+      );
     case 'email-already-in-use':
       return const AuthFieldError(
-        email: 'An account already exists with this email.',
+        email: 'Ya existe una cuenta con ese correo.',
       );
     case 'weak-password':
       return const AuthFieldError(
-        password: 'Password must be at least 6 characters.',
+        password: 'La contraseña debe tener al menos 6 caracteres.',
       );
     case 'invalid-email':
-      return const AuthFieldError(email: 'Enter a valid email address.');
+      return const AuthFieldError(email: 'Ingresa un correo válido.');
     default:
       return const AuthFieldError(
-        general: 'Something went wrong. Please try again.',
+        general: 'Algo salió mal. Intenta de nuevo.',
       );
   }
 }

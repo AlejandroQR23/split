@@ -55,10 +55,10 @@ class _ExpenseHistorySectionState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Spending history', style: theme.textTheme.h4),
+            Text('Historial de gastos', style: theme.textTheme.h4),
             ShadBadge.secondary(
               child: Text(
-                expenseCount == 0 ? 'No expenses' : '$expenseCount expenses',
+                expenseCount == 0 ? 'Sin gastos' : '$expenseCount gastos',
               ),
             ),
           ],
@@ -66,7 +66,7 @@ class _ExpenseHistorySectionState
         const SizedBox(height: AppSpacing.lg),
         if (sortedExpenses.isEmpty)
           Text(
-            'No expenses logged in this group yet.',
+            'Aún no hay gastos registrados en este grupo.',
             style: theme.textTheme.muted,
           )
         else
@@ -107,18 +107,18 @@ class _ExpenseHistoryTile extends ConsumerWidget {
         return ShadSheet(
           useSafeArea: false,
           padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-          title: const Text('Undo this payment?'),
+          title: const Text('¿Deshacer este pago?'),
           description: const Text(
-            "This removes the payment and the balance it settled comes back.",
+            'Esto elimina el pago y el saldo que liquidaba vuelve a aparecer.',
           ),
           actions: [
             ShadButton.outline(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             ShadButton.destructive(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Undo'),
+              child: const Text('Deshacer'),
             ),
           ],
           child: sheetContentSpacer,
@@ -139,7 +139,7 @@ class _ExpenseHistoryTile extends ConsumerWidget {
           : error.toString();
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not undo payment'),
+          title: const Text('No se pudo deshacer el pago'),
           description: Text(errorMessage),
         ),
       );
@@ -148,7 +148,7 @@ class _ExpenseHistoryTile extends ConsumerWidget {
     if (!context.mounted) return true;
     ShadToaster.of(
       context,
-    ).show(const ShadToast(title: Text('Payment undone')));
+    ).show(const ShadToast(title: Text('Pago deshecho')));
     return true;
   }
 

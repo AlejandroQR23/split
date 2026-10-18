@@ -51,17 +51,17 @@ class GroupForm extends StatelessWidget {
           key: formKey,
           child: ShadInputFormField(
             id: 'name',
-            label: const Text('Group name'),
-            placeholder: const Text('Cabin trip, roommates…'),
+            label: const Text('Nombre del grupo'),
+            placeholder: const Text('Viaje a la cabaña, roomies…'),
             initialValue: initialName,
             validator: (v) {
-              if (v.trim().isEmpty) return 'Enter a group name';
+              if (v.trim().isEmpty) return 'Ingresa un nombre para el grupo';
               return null;
             },
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text('Members', style: fieldLabelStyle),
+        Text('Integrantes', style: fieldLabelStyle),
         const SizedBox(height: AppSpacing.xs),
         Text(membersHint, style: theme.textTheme.muted),
         const SizedBox(height: AppSpacing.sm),
@@ -88,7 +88,7 @@ class GroupForm extends StatelessWidget {
                 Expanded(
                   child: ShadInput(
                     controller: memberControllers[i],
-                    placeholder: const Text('Member name'),
+                    placeholder: const Text('Nombre del integrante'),
                   ),
                 ),
                 if (memberControllers.length > 1)
@@ -104,7 +104,7 @@ class GroupForm extends StatelessWidget {
           ),
         ShadButton.outline(
           onPressed: onAddMemberField,
-          child: const Text('Add another member'),
+          child: const Text('Agregar otro integrante'),
         ),
       ],
     );

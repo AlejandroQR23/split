@@ -68,7 +68,7 @@ abstract class ApiHttpClient extends http.BaseClient {
     }
 
     throw NetworkException(
-      APIError(message: 'Unexpected error', code: 'unexpected_error'),
+      APIError(message: 'Ocurrió un error inesperado', code: 'unexpected_error'),
       response.statusCode,
     );
   }

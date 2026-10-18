@@ -71,7 +71,7 @@ class _SettleUpScreenState extends ConsumerState<SettleUpScreen> {
       setState(() => _isSubmitting = false);
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not record payment'),
+          title: const Text('No se pudo registrar el pago'),
           description: Text(errorMessage),
         ),
       );
@@ -81,7 +81,7 @@ class _SettleUpScreenState extends ConsumerState<SettleUpScreen> {
     if (!mounted) return;
     ShadToaster.of(
       context,
-    ).show(const ShadToast(title: Text('Payment recorded')));
+    ).show(const ShadToast(title: Text('Pago registrado')));
     context.pop();
   }
 
@@ -90,7 +90,7 @@ class _SettleUpScreenState extends ConsumerState<SettleUpScreen> {
     return ShadSheet(
       useSafeArea: false,
       padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-      title: const Text('Settle up'),
+      title: const Text('Quedar a manu'),
       child: SizedBox(height: 160, child: Center(child: child)),
     );
   }
@@ -116,7 +116,7 @@ class _SettleUpScreenState extends ConsumerState<SettleUpScreen> {
         if (group == null) {
           return _skeletonSheet(
             context,
-            const AsyncErrorText(error: 'Group not found'),
+            const AsyncErrorText(error: 'Grupo no encontrado'),
           );
         }
 
@@ -129,7 +129,7 @@ class _SettleUpScreenState extends ConsumerState<SettleUpScreen> {
         if (fromMember == null || toMember == null) {
           return _skeletonSheet(
             context,
-            const AsyncErrorText(error: 'Member not found'),
+            const AsyncErrorText(error: 'Integrante no encontrado'),
           );
         }
 
@@ -169,14 +169,16 @@ class _SettleUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
-    final fromLabel = fromMember.id == currentUser.id ? 'You' : fromMember.name;
-    final toLabel = toMember.id == currentUser.id ? 'You' : toMember.name;
+    final fromLabel = fromMember.id == currentUser.id ? 'Tú' : fromMember.name;
+    final toIsMe = toMember.id == currentUser.id;
+    final toLabel = toIsMe ? 'Tú' : toMember.name;
+    final paysVerb = fromMember.id == currentUser.id ? 'le pagas a' : 'le paga a';
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return ShadSheet(
       useSafeArea: false,
       padding: EdgeInsets.fromLTRB(24, 24, 24, bottomInset),
-      title: const Text('Settle up'),
+      title: const Text('Quedar a manu'),
       actions: [
         SizedBox(
           width: double.infinity,
@@ -188,7 +190,7 @@ class _SettleUpForm extends StatelessWidget {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Record payment'),
+                : const Text('Registrar pago'),
           ),
         ),
       ],
@@ -221,7 +223,10 @@ class _SettleUpForm extends StatelessWidget {
                   foregroundColor: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text('$fromLabel pays $toLabel', style: theme.textTheme.large),
+                Text(
+                  toIsMe ? '$fromLabel te paga' : '$fromLabel $paysVerb $toLabel',
+                  style: theme.textTheme.large,
+                ),
               ],
             ),
           ),
@@ -230,7 +235,7 @@ class _SettleUpForm extends StatelessWidget {
             key: formKey,
             child: ShadInputFormField(
               id: 'amount',
-              label: const Text('Amount'),
+              label: const Text('Monto'),
               placeholder: const Text('0.00'),
               initialValue: suggestedAmount.toStringAsFixed(2),
               keyboardType: const TextInputType.numberWithOptions(
@@ -239,7 +244,7 @@ class _SettleUpForm extends StatelessWidget {
               validator: (v) {
                 final parsed = double.tryParse(v);
                 if (parsed == null || parsed <= 0) {
-                  return 'Enter an amount greater than 0';
+                  return 'Ingresa un monto mayor a 0';
                 }
                 return null;
               },

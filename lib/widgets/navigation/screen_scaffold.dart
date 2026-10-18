@@ -10,9 +10,9 @@ class ScreenScaffold extends StatelessWidget {
   const ScreenScaffold({super.key, required this.child});
 
   static const List<FloatingNavItem> items = [
-    FloatingNavItem(icon: HugeIcons.strokeRoundedHome01, label: 'Home'),
-    FloatingNavItem(icon: HugeIcons.strokeRoundedUserGroup, label: 'Groups'),
-    FloatingNavItem(icon: HugeIcons.strokeRoundedUser, label: 'Profile'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedHome01, label: 'Inicio'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedUserGroup, label: 'Grupos'),
+    FloatingNavItem(icon: HugeIcons.strokeRoundedUser, label: 'Perfil'),
   ];
 
   void onTap(int index) {

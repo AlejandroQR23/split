@@ -41,6 +41,7 @@ Future<void> _pumpTransferCard(
   String fromId = 'mem_01h',
   String toId = 'mem_02h',
   Map<String, Member> memberById = const {'mem_01h': _alex, 'mem_02h': _sam},
+  Member currentUser = _observer,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -49,7 +50,7 @@ Future<void> _pumpTransferCard(
         home: Scaffold(
           body: TransferCard(
             transfer: Transfer(from: fromId, to: toId, amount: 20),
-            currentUser: _observer,
+            currentUser: currentUser,
             memberById: memberById,
             groupId: 'grp_01h',
             canInvite: canInvite,
@@ -61,14 +62,27 @@ Future<void> _pumpTransferCard(
 }
 
 void main() {
+  testWidgets('uses "a ti" rather than "a Tú" when you are owed', (
+    tester,
+  ) async {
+    await _pumpTransferCard(
+      tester,
+      inviteRepository: _FakeInviteRepository(),
+      currentUser: _sam,
+    );
+
+    expect(find.text('Alex Rivera a ti'), findsOneWidget);
+    expect(find.textContaining('a Tú'), findsNothing);
+  });
+
   testWidgets('shows an invite action for a ghost counterparty', (tester) async {
     await _pumpTransferCard(
       tester,
       inviteRepository: _FakeInviteRepository(),
     );
 
-    expect(find.text('Invite Sam Lee'), findsOneWidget);
-    expect(find.textContaining('Invite Alex Rivera'), findsNothing);
+    expect(find.text('Invitar a Sam Lee'), findsOneWidget);
+    expect(find.textContaining('Invitar a Alex Rivera'), findsNothing);
   });
 
   testWidgets('tapping the invite action generates an invite for that member', (
@@ -77,7 +91,7 @@ void main() {
     final fakeInviteRepository = _FakeInviteRepository();
     await _pumpTransferCard(tester, inviteRepository: fakeInviteRepository);
 
-    await tester.tap(find.text('Invite Sam Lee'));
+    await tester.tap(find.text('Invitar a Sam Lee'));
     await tester.pump();
 
     expect(fakeInviteRepository.lastGeneratedMemberId, 'mem_02h');
@@ -94,8 +108,8 @@ void main() {
       memberById: const {'mem_04h': _ghostFrom, 'mem_01h': _alex},
     );
 
-    expect(find.text('Invite Jordan Kim'), findsOneWidget);
-    expect(find.textContaining('Invite Alex Rivera'), findsNothing);
+    expect(find.text('Invitar a Jordan Kim'), findsOneWidget);
+    expect(find.textContaining('Invitar a Alex Rivera'), findsNothing);
   });
 
   testWidgets(
@@ -111,7 +125,7 @@ void main() {
         memberById: const {'mem_04h': _ghostFrom, 'mem_01h': _alex},
       );
 
-      await tester.tap(find.text('Invite Jordan Kim'));
+      await tester.tap(find.text('Invitar a Jordan Kim'));
       await tester.pump();
 
       expect(fakeInviteRepository.lastGeneratedMemberId, 'mem_04h');

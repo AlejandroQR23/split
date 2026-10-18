@@ -60,7 +60,7 @@ class LabelSelector extends StatelessWidget {
             side: BorderSide(color: theme.colorScheme.border),
           ),
           onPressed: onCreateNew,
-          child: const Text('+ New'),
+          child: const Text('+ Nueva'),
         ),
       ],
     );

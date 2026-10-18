@@ -12,7 +12,7 @@ class Member {
 
   /// The name the backend gives a freshly-provisioned account before the
   /// member has chosen one (see `GET /members/me` in docs/auth/backend.md).
-  static const placeholderName = 'New member';
+  static const placeholderName = 'Nuevo integrante';
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
     id: json['id'] as String,

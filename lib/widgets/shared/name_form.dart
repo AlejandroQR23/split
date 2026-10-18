@@ -52,10 +52,10 @@ class _NameFormState extends ConsumerState<NameForm> {
       if (!mounted) return;
       final message = error is NetworkException
           ? error.error.message
-          : 'Something went wrong. Please try again.';
+          : 'Algo salió mal. Intenta de nuevo.';
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not save your name'),
+          title: const Text('No se pudo guardar tu nombre'),
           description: Text(message),
         ),
       );
@@ -75,10 +75,10 @@ class _NameFormState extends ConsumerState<NameForm> {
           key: _formKey,
           child: ShadInputFormField(
             id: 'name',
-            label: const Text('Your name'),
-            placeholder: const Text('Alex Rivera'),
+            label: const Text('Tu nombre'),
+            placeholder: const Text('Ana Torres'),
             initialValue: widget.initialName,
-            validator: (v) => v.trim().isEmpty ? 'Enter your name' : null,
+            validator: (v) => v.trim().isEmpty ? 'Ingresa tu nombre' : null,
           ),
         ),
         const SizedBox(height: AppSpacing.xl),

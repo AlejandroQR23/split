@@ -71,7 +71,7 @@ Future<void> _pumpSetNameScreen(
   WidgetTester tester, {
   required AuthRepository authRepository,
   required MemberRepository memberRepository,
-  Member? currentMember = const Member(id: 'mem_01h', name: 'New member'),
+  Member? currentMember = const Member(id: 'mem_01h', name: 'Nuevo integrante'),
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -99,10 +99,10 @@ void main() {
       memberRepository: memberRepository,
     );
 
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Continuar'));
     await tester.pump();
 
-    expect(find.text('Enter your name'), findsOneWidget);
+    expect(find.text('Ingresa tu nombre'), findsOneWidget);
     expect(authRepository.updateDisplayNameCallCount, 0);
     expect(memberRepository.updateNameCallCount, 0);
   });
@@ -119,7 +119,7 @@ void main() {
       );
 
       await tester.enterText(find.byType(ShadInput), 'Alex Rivera');
-      await tester.tap(find.text('Continue'));
+      await tester.tap(find.text('Continuar'));
       await tester.pumpAndSettle();
 
       expect(authRepository.updateDisplayNameCallCount, 1);
@@ -145,7 +145,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(ShadInput), 'Alex Rivera');
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Continuar'));
     await tester.pumpAndSettle();
 
     expect(find.text('Could not reach the server'), findsOneWidget);

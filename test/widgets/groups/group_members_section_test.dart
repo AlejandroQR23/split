@@ -46,10 +46,10 @@ void main() {
       ),
     );
 
-    expect(find.text('Members'), findsOneWidget);
+    expect(find.text('Integrantes'), findsOneWidget);
     expect(find.text('Alex Rivera'), findsNothing);
     expect(find.text('Sam Lee'), findsNothing);
-    expect(find.text('Ghost'), findsNothing);
+    expect(find.text('Fantasma'), findsNothing);
   });
 
   testWidgets('tapping the header expands the list and shows a Ghost badge '
@@ -64,10 +64,10 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Members'));
+    await tester.tap(find.text('Integrantes'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ghost'), findsOneWidget);
+    expect(find.text('Fantasma'), findsOneWidget);
     expect(find.text('Alex Rivera'), findsOneWidget);
     expect(find.text('Sam Lee'), findsOneWidget);
   });
@@ -89,7 +89,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Members'));
+    await tester.tap(find.text('Integrantes'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(ShadIconButton));

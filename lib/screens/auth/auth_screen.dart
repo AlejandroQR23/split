@@ -73,7 +73,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       setState(() {
         _isSubmitting = false;
         _fieldError = const AuthFieldError(
-          general: 'Something went wrong. Please try again.',
+          general: 'Algo salió mal. Intenta de nuevo.',
         );
       });
     }
@@ -95,16 +95,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           ),
           children: [
             Text(
-              'Split',
+              'Manu',
               style: theme.textTheme.large.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-            Text('Welcome back!', style: AppTypography.screenTitle),
+            Text('¡Hola de nuevo!', style: AppTypography.screenTitle),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Split expenses with friends, the easy way.',
+              'Divide gastos con tus amigos, sin complicaciones.',
               style: theme.textTheme.muted,
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -112,8 +112,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               value: _mode,
               onChanged: _switchMode,
               tabs: const [
-                ShadTab(value: AuthMode.login, child: Text('Login')),
-                ShadTab(value: AuthMode.signUp, child: Text('Sign up')),
+                ShadTab(value: AuthMode.login, child: Text('Entrar')),
+                ShadTab(value: AuthMode.signUp, child: Text('Crear cuenta')),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -122,7 +122,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               formKey: _formKey,
               isSubmitting: _isSubmitting,
               onSubmit: _handleSubmit,
-              submitLabel: _mode == AuthMode.login ? 'Login' : 'Sign up',
+              submitLabel: _mode == AuthMode.login ? 'Entrar' : 'Crear cuenta',
               emailError: _fieldError.email,
               passwordError: _fieldError.password,
               generalError: _fieldError.general,

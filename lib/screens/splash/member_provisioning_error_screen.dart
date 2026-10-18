@@ -16,12 +16,12 @@ class MemberProvisioningErrorScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Could not set up your account. Check your connection and try again.',
+              'No se pudo configurar tu cuenta. Revisa tu conexión e intenta de nuevo.',
               style: theme.textTheme.p,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ShadButton(onPressed: onRetry, child: const Text('Retry')),
+            ShadButton(onPressed: onRetry, child: const Text('Reintentar')),
           ],
         ),
       ),

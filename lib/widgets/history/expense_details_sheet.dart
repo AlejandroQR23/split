@@ -49,7 +49,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
   final Member currentUser;
 
   String _nameFor(Member member) =>
-      member.id == currentUser.id ? 'You' : member.name;
+      member.id == currentUser.id ? 'Tú' : member.name;
 
   Future<void> _togglePause(
     BuildContext context,
@@ -67,7 +67,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
           : error.toString();
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Could not update this expense'),
+          title: const Text('No se pudo actualizar este gasto'),
           description: Text(errorMessage),
         ),
       );
@@ -101,7 +101,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
-              'Could not find this recurring expense.',
+              'No se encontró este gasto recurrente.',
               style: theme.textTheme.muted,
             ),
           );
@@ -112,7 +112,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
           children: [
             const SizedBox(height: AppSpacing.md),
             Text(
-              rule.active ? scheduleText : '$scheduleText (paused)',
+              rule.active ? scheduleText : '$scheduleText (pausado)',
               style: theme.textTheme.muted,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -124,7 +124,7 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
                 size: 16,
               ),
               onPressed: () => _togglePause(context, ref, rule),
-              child: Text(rule.active ? 'Pause' : 'Resume'),
+              child: Text(rule.active ? 'Pausar' : 'Reanudar'),
             ),
           ],
         );
@@ -151,11 +151,16 @@ class _ExpenseDetailsSheetContent extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           sheetContentSpacer,
-          Text('Paid by ${_nameFor(expense.paidBy)}', style: theme.textTheme.p),
+          Text(
+            expense.paidBy.id == currentUser.id
+                ? 'Pagaste tú'
+                : 'Pagó ${expense.paidBy.name}',
+            style: theme.textTheme.p,
+          ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Split equally among $shareCount '
-            '${shareCount == 1 ? 'person' : 'people'}',
+            'Dividido en partes iguales entre $shareCount '
+            '${shareCount == 1 ? 'persona' : 'personas'}',
             style: theme.textTheme.muted,
           ),
           const SizedBox(height: AppSpacing.sm),

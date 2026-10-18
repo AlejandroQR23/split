@@ -55,22 +55,22 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
             children: [
               ShadInputFormField(
                 id: 'email',
-                label: const Text('Email'),
-                placeholder: const Text('you@example.com'),
+                label: const Text('Correo'),
+                placeholder: const Text('tu@correo.com'),
                 keyboardType: TextInputType.emailAddress,
                 description: widget.emailError != null
                     ? Text(widget.emailError!, style: errorStyle)
                     : null,
                 validator: (v) {
-                  if (v.trim().isEmpty) return 'Enter your email';
-                  if (!v.contains('@')) return 'Enter a valid email address';
+                  if (v.trim().isEmpty) return 'Ingresa tu correo';
+                  if (!v.contains('@')) return 'Ingresa un correo válido';
                   return null;
                 },
               ),
               const SizedBox(height: AppSpacing.lg),
               ShadInputFormField(
                 id: 'password',
-                label: const Text('Password'),
+                label: const Text('Contraseña'),
                 placeholder: const Text('••••••••'),
                 obscureText: _obscurePassword,
                 trailing: SizedBox.square(
@@ -97,7 +97,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
                     ? Text(widget.passwordError!, style: errorStyle)
                     : null,
                 validator: (v) {
-                  if (v.isEmpty) return 'Enter your password';
+                  if (v.isEmpty) return 'Ingresa tu contraseña';
                   return null;
                 },
               ),

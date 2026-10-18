@@ -39,7 +39,7 @@ void main() {
 
     expect(find.textContaining('Food'), findsOneWidget);
     expect(find.textContaining('Rent'), findsOneWidget);
-    expect(find.text('+ New'), findsOneWidget);
+    expect(find.text('+ Nueva'), findsOneWidget);
   });
 
   testWidgets('tapping an unselected label selects it', (tester) async {
@@ -95,7 +95,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('+ New'));
+    await tester.tap(find.text('+ Nueva'));
     await tester.pumpAndSettle();
 
     expect(createNewCalled, isTrue);

@@ -82,11 +82,11 @@ class AddExpenseForm extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) => ShadSelectFormField<String>(
                   id: 'groupId',
-                  label: const Text('Group'),
+                  label: const Text('Grupo'),
                   enabled: !groupLocked,
                   initialValue: selectedGroupId,
                   minWidth: constraints.maxWidth,
-                  placeholder: const Text('Select a group'),
+                  placeholder: const Text('Selecciona un grupo'),
                   selectedOptionBuilder: (context, value) =>
                       Text(findGroup(groups, value)?.name ?? value),
                   options: [
@@ -95,7 +95,7 @@ class AddExpenseForm extends StatelessWidget {
                   ],
                   onChanged: onGroupChanged,
                   validator: (v) {
-                    if (v == null) return 'Please select a group';
+                    if (v == null) return 'Selecciona un grupo';
                     return null;
                   },
                 ),
@@ -103,11 +103,11 @@ class AddExpenseForm extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               ShadInputFormField(
                 id: 'concept',
-                label: const Text('Concept'),
-                placeholder: const Text('Dinner, groceries, taxi…'),
+                label: const Text('Concepto'),
+                placeholder: const Text('Cena, súper, taxi…'),
                 validator: (v) {
                   if (v.trim().isEmpty) {
-                    return 'Enter what this expense was for';
+                    return 'Describe en qué se gastó';
                   }
                   return null;
                 },
@@ -115,7 +115,7 @@ class AddExpenseForm extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               ShadInputFormField(
                 id: 'amount',
-                label: const Text('Amount'),
+                label: const Text('Monto'),
                 placeholder: const Text('0.00'),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -123,7 +123,7 @@ class AddExpenseForm extends StatelessWidget {
                 validator: (v) {
                   final parsed = double.tryParse(v);
                   if (parsed == null || parsed <= 0) {
-                    return 'Enter an amount greater than 0';
+                    return 'Ingresa un monto mayor a 0';
                   }
                   return null;
                 },
@@ -132,10 +132,10 @@ class AddExpenseForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text('Label (optional)', style: fieldLabelStyle),
+        Text('Etiqueta (opcional)', style: fieldLabelStyle),
         const SizedBox(height: AppSpacing.sm),
         if (group == null)
-          Text('Select a group first', style: theme.textTheme.muted)
+          Text('Primero selecciona un grupo', style: theme.textTheme.muted)
         else
           LabelField(
             groupId: group.id,
@@ -143,10 +143,10 @@ class AddExpenseForm extends StatelessWidget {
             onChanged: onLabelChanged,
           ),
         const SizedBox(height: AppSpacing.lg),
-        Text('Paid by', style: fieldLabelStyle),
+        Text('Pagó', style: fieldLabelStyle),
         const SizedBox(height: AppSpacing.sm),
         if (members.isEmpty)
-          Text('Select a group first', style: theme.textTheme.muted)
+          Text('Primero selecciona un grupo', style: theme.textTheme.muted)
         else
           MemberSelector(
             members: members,
@@ -156,13 +156,13 @@ class AddExpenseForm extends StatelessWidget {
           ),
         if (submitted && payerId == null) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text('Select who paid', style: fieldErrorStyle),
+          Text('Selecciona quién pagó', style: fieldErrorStyle),
         ],
         const SizedBox(height: AppSpacing.lg),
-        Text('Split between', style: fieldLabelStyle),
+        Text('Dividir entre', style: fieldLabelStyle),
         const SizedBox(height: AppSpacing.sm),
         if (members.isEmpty)
-          Text('Select a group first', style: theme.textTheme.muted)
+          Text('Primero selecciona un grupo', style: theme.textTheme.muted)
         else
           MemberSelector(
             members: members,
@@ -172,15 +172,15 @@ class AddExpenseForm extends StatelessWidget {
           ),
         if (submitted && splitMemberIds.isEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text('Select at least one person', style: fieldErrorStyle),
+          Text('Selecciona al menos a una persona', style: fieldErrorStyle),
         ],
         const SizedBox(height: AppSpacing.lg),
         ShadSwitch(
           value: repeatMonthly,
           onChanged: onRepeatMonthlyChanged,
-          label: const Text('Repeat monthly'),
+          label: const Text('Repetir cada mes'),
           sublabel: const Text(
-            'Automatically add this expense again next month',
+            'Este gasto se agregará automáticamente otra vez el próximo mes',
           ),
         ),
         const SizedBox(height: AppSpacing.xl),
@@ -197,7 +197,7 @@ class AddExpenseForm extends StatelessWidget {
                       color: theme.colorScheme.primaryForeground,
                     ),
                   )
-                : const Text('Add expense'),
+                : const Text('Agregar gasto'),
           ),
         ),
       ],

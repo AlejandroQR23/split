@@ -38,12 +38,12 @@ void main() {
 
   group('describeRecurrence', () {
     test('monthly/1 reads "Repeats monthly"', () {
-      expect(describeRecurrence('monthly', 1), 'Repeats monthly');
+      expect(describeRecurrence('monthly', 1), 'Se repite cada mes');
     });
 
     test('a value the app never produces itself still degrades sensibly', () {
-      expect(describeRecurrence('weekly', 2), 'Repeats every 2 weeks');
-      expect(describeRecurrence('daily', 1), 'Repeats every 1 day');
+      expect(describeRecurrence('weekly', 2), 'Se repite cada 2 semanas');
+      expect(describeRecurrence('daily', 1), 'Se repite cada 1 día');
     });
   });
 }

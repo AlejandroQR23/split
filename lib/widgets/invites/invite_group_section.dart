@@ -53,8 +53,8 @@ class InviteGroupSection extends ConsumerWidget {
           loading: () => const SizedBox.shrink(),
           error: (error, stackTrace) => Text(
             error is NetworkException && error.error.code == 'unauthenticated'
-                ? 'This invite has expired — ask for a new link.'
-                : "Couldn't load this group's activity.",
+                ? 'Esta invitación ya expiró — pide un enlace nuevo.'
+                : 'No se pudo cargar la actividad de este grupo.',
             style: theme.textTheme.muted,
           ),
           data: (transfers) {
@@ -92,8 +92,8 @@ class InviteGroupSection extends ConsumerWidget {
           loading: () => const SizedBox.shrink(),
           error: (error, stackTrace) => Text(
             error is NetworkException && error.error.code == 'unauthenticated'
-                ? 'This invite has expired — ask for a new link.'
-                : "Couldn't load this group's activity.",
+                ? 'Esta invitación ya expiró — pide un enlace nuevo.'
+                : 'No se pudo cargar la actividad de este grupo.',
             style: theme.textTheme.muted,
           ),
           data: (expenses) => InviteExpensesList(expenses: expenses),
