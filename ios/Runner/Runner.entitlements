@@ -4,11 +4,10 @@
 <dict>
 	<!-- Wired into the Runner target's Debug/Release/Profile build configs
 	     via CODE_SIGN_ENTITLEMENTS + DEVELOPMENT_TEAM in project.pbxproj.
-	     TODO: swap the host below for the final custom domain once you have
-	     one (must match INVITE_WEB_URL in .env). -->
+	     Host must match INVITE_WEB_URL in .env. -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:manu-omega-liart.vercel.app</string>
+		<string>applinks:www.app-manu.com</string>
 	</array>
 </dict>
 </plist>

@@ -34,8 +34,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="splitapp" android:host="invite"/>
             </intent-filter>
-            <!-- TODO: swap the host below (and INVITE_WEB_URL in .env) for
-                 the final custom domain once you have one — and update
+            <!-- Host must match INVITE_WEB_URL in .env — update
                  assetlinks.json's sha256_cert_fingerprints if you ever
                  rotate the signing key. -->
             <intent-filter android:autoVerify="true">
@@ -44,7 +43,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
                     android:scheme="https"
-                    android:host="manu-omega-liart.vercel.app"
+                    android:host="www.app-manu.com"
                     android:pathPrefix="/invite"/>
             </intent-filter>
         </activity>
