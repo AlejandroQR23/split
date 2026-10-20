@@ -42,7 +42,11 @@ ones).
 ### `GET /groups`
 
 Lists groups the calling member belongs to. `200` →
-`{ "groups": [Group, ...] }`.
+`{ "groups": [Group, ...] }`. The full collection, in no guaranteed order
+— no `limit`, no pagination (see
+[`../architecture.md`](../architecture.md#list-endpoints--pagination)).
+For a bounded, activity-ordered slice of the same list, use
+`GET /members/{memberId}/groups` below.
 
 ### `GET /groups/{groupId}`
 
@@ -83,11 +87,27 @@ the current settlement calculation
 would silently erase a debt. There is no force-remove; the client should
 surface this rather than allow silent data loss.
 
-## Known discrepancy
+### `GET /members/{memberId}/groups`
 
-`GroupRepositoryImpl.fetchRecentGroups` (used for the home screen's
-"Recent Groups" section) calls `GET members/{userId}/groups?limit=N`, an
-endpoint not described above — the only documented groups-list route is
-`GET /groups`, with no path-embedded member id or `limit` param. This is a
-tracked, unresolved finding — see [`../../todo.md`](../../todo.md) — not a
-documented part of the contract; don't treat it as spec.
+Viewer-relative and bounded: this member's groups ordered by recent
+activity, most recently active first — "recent activity" meaning the most
+recent `date` among that group's expenses. Groups with no expenses at all
+sort after every group that has one, in an unspecified order among
+themselves.
+
+Query params: `limit` (optional, integer, `1`-`100`, default `20`) — the
+maximum number of groups to return.
+
+`200` → `{ "groups": [Group, ...] }`. Each entry is the full `Group`
+resource, the same shape `GET /groups` returns — just reordered and
+capped.
+
+Errors: `404 not_found` if the member doesn't exist;
+`400 validation_error` if `limit` is outside `1`-`100`;
+`400 user_mismatch` if `memberId` isn't the calling member — the shared
+access rule for viewer-relative endpoints, see
+[`../members/overview.md`](../members/overview.md#viewer-relative-endpoints).
+
+Backs `recentGroupsProvider` (`lib/providers/groups_provider.dart`, which
+asks for `limit: 3`) and the home screen's "Recent Groups" section, via
+`GroupRepositoryImpl.fetchRecentGroups`.

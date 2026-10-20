@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -9,6 +14,7 @@ import 'firebase_options.dart';
 import 'models/member.dart';
 import 'providers/auth_provider.dart';
 import 'providers/current_member_provider.dart';
+import 'providers/push_provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/expenses/add_expense_screen.dart';
 import 'screens/groups/create_group_screen.dart';
@@ -18,6 +24,7 @@ import 'screens/home/home_screen.dart';
 import 'screens/invites/invite_screen.dart';
 import 'screens/onboarding/set_name_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
+import 'screens/profile/preferences_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/splash/member_provisioning_error_screen.dart';
 import 'screens/splash/splash_screen.dart';
@@ -25,6 +32,7 @@ import 'theme/app_theme.dart';
 import 'utils/auth_redirect.dart';
 import 'utils/deep_link.dart';
 import 'utils/go_router_refresh_stream.dart';
+import 'utils/push_notifications.dart';
 import 'widgets/navigation/screen_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -37,6 +45,70 @@ final GlobalKey<NavigatorState> _profileShellNavigatorKey =
 
 const _authRoutes = {'/sign-in', '/sign-up'};
 const _onboardingNameRoute = '/onboarding/name';
+
+// Must match the backend's channelId and the manifest's meta-data — see
+// docs/notifications/overview.md.
+const _expenseNotificationChannelId = 'manu_gastos';
+const _expenseNotificationChannelName = 'Gastos';
+
+final _localNotifications = FlutterLocalNotificationsPlugin();
+
+/// Android notification channel + foreground `onMessage` handling (see docs/notifications/overview.md).
+Future<void> _initForegroundNotifications({
+  required void Function(String route) onNotificationRoute,
+}) async {
+  const channel = AndroidNotificationChannel(
+    _expenseNotificationChannelId,
+    _expenseNotificationChannelName,
+    importance: Importance.high,
+  );
+  await _localNotifications
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >()
+      ?.createNotificationChannel(channel);
+
+  void handleResponse(NotificationResponse response) {
+    final payload = response.payload;
+    if (payload == null) return;
+
+    final data = jsonDecode(payload) as Map<String, dynamic>;
+    final route = extractNotificationRoute(data);
+    if (route != null) onNotificationRoute(route);
+  }
+
+  await _localNotifications.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    ),
+    onDidReceiveNotificationResponse: handleResponse,
+  );
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseMessaging.onMessage.listen((message) {
+    final notification = message.notification;
+    if (notification == null) return;
+
+    _localNotifications.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _expenseNotificationChannelId,
+          _expenseNotificationChannelName,
+          importance: Importance.high,
+        ),
+      ),
+      payload: jsonEncode(message.data),
+    );
+  });
+}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshStream = GoRouterRefreshStream(
@@ -129,6 +201,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const EditProfileScreen(),
       ),
+      GoRoute(
+        path: '/profile/preferences',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const PreferencesScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ScreenScaffold(child: navigationShell);
@@ -186,6 +263,31 @@ Future<void> main() async {
   listenForInviteDeepLinks(
     (token) => container.read(routerProvider).go('/invites/$token'),
   );
+
+  void goToNotificationRoute(String route) =>
+      container.read(routerProvider).go(route);
+
+  // Shared by both notification-tap paths (backgrounded/killed and
+  // foreground) — see docs/notifications/overview.md.
+  void handleNotificationRoute(String route) {
+    if (container.read(authRepositoryProvider).currentUser == null) {
+      container.read(pendingNotificationRouteProvider.notifier).state =
+          route;
+    } else {
+      goToNotificationRoute(route);
+    }
+  }
+
+  await _initForegroundNotifications(
+    onNotificationRoute: handleNotificationRoute,
+  );
+  listenForNotificationTaps(handleNotificationRoute);
+  container.listen(currentMemberProvider, (previous, next) {
+    if (next.value != null) {
+      consumePendingNotificationRoute(container, goToNotificationRoute);
+      unawaited(registerDeviceForPush(container.read(deviceRepositoryProvider)));
+    }
+  });
 
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }

@@ -39,7 +39,7 @@ generic error.
 A verified Firebase identity isn't automatically a backend `Member` — the
 two are linked lazily. `GET /members/me` is a **get-or-create**: on the
 first authenticated call for a given identity, it provisions a new
-`Member` row (with `name` set to the placeholder `"New member"` — see
+`Member` row (with `name` set to the placeholder `"Nuevo integrante"` — see
 [`Member.placeholderName`](../../lib/models/member.dart)) and returns it;
 every call after that returns the same `Member`.
 
@@ -57,6 +57,7 @@ run (see [`overview.md`](overview.md#member-provisioning) and
 | --- | --- | --- |
 | `unauthenticated` | 401 | Token missing, invalid, or expired. Triggers the client's refresh-and-retry (see above). |
 | `member_not_linked` | 401 | Identity is verified but has no linked `Member` yet — call `GET /members/me` first. |
+| `user_mismatch` | 400 | A viewer-relative endpoint was called with a `memberId` that isn't the calling member's — see [`../members/overview.md`](../members/overview.md#viewer-relative-endpoints). |
 
 These are additive to the general error shape and status codes in
 [`../architecture.md`](../architecture.md#error-shape).

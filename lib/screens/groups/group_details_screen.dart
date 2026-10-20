@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,13 +53,44 @@ class GroupDetailsScreen extends ConsumerWidget {
           skipError: true,
           loading: () => loading,
           error: (error, stackTrace) => AsyncErrorText(error: error),
-          data: (transfers) => _GroupDetailsContent(
-            group: groups.firstWhere((g) => g.id == groupId),
-            expenses: expenses,
-            transfers: transfers,
-            currentUser: currentUser,
-          ),
+          data: (transfers) {
+            final group = groups.firstWhereOrNull((g) => g.id == groupId);
+            if (group == null) return const _GroupNotFound();
+
+            return _GroupDetailsContent(
+              group: group,
+              expenses: expenses,
+              transfers: transfers,
+              currentUser: currentUser,
+            );
+          },
         ),
+      ),
+    );
+  }
+}
+
+class _GroupNotFound extends StatelessWidget {
+  const _GroupNotFound();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = ShadTheme.of(context);
+
+    return DecoratedBox(
+      decoration: const BoxDecoration(color: AppColors.background),
+      child: Column(
+        children: [
+          const ScreenHeader(title: '', showBackButton: true),
+          Expanded(
+            child: Center(
+              child: Text(
+                'Este grupo ya no existe.',
+                style: theme.textTheme.muted,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -6,9 +6,11 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/current_member_provider.dart';
+import '../../providers/push_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/navigation/screen_header.dart';
+import '../../widgets/profile/settings_row_card.dart';
 import '../../widgets/shared/avatar.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -58,13 +60,19 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.xl),
                 _InviteFriendsCard(onTap: () {}),
                 const SizedBox(height: AppSpacing.xl),
+                SettingsRowCard(
+                  title: 'Preferencias',
+                  subtitle: 'Gestiona tus avisos de gastos y recordatorios.',
+                  onTap: () => context.push('/profile/preferences'),
+                ),
+                const SizedBox(height: AppSpacing.xl),
                 SizedBox(
                   width: double.infinity,
                   child: ShadButton.ghost(
                     leading: const HugeIcon(
                       icon: HugeIcons.strokeRoundedLogout01,
                     ),
-                    onPressed: () => ref.read(authRepositoryProvider).signOut(),
+                    onPressed: () => signOutAndUnregisterDevice(ref),
                     child: const Text('Cerrar sesión'),
                   ),
                 ),

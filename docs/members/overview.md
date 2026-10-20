@@ -62,3 +62,26 @@ There is no `DELETE /members/{memberId}` — deleting a person who has
 expense history attached is a data-integrity question (what happens to
 their `paidBy`/`shares` references?) that's intentionally out of scope for
 now.
+
+## Viewer-relative endpoints
+
+Three endpoints live under `/members/{memberId}/` but answer "what's
+mine" rather than "look up this member". Each is documented with the
+domain it returns:
+
+| Endpoint | Returns | Documented in |
+| --- | --- | --- |
+| `GET /members/{memberId}/groups` | This member's groups, most-recently-active first. | [`../groups/overview.md`](../groups/overview.md#get-membersmemberidgroups) |
+| `GET /members/{memberId}/expenses` | This member's recent expenses across all their groups. | [`../expenses/overview.md`](../expenses/overview.md#get-membersmemberidexpenses) |
+| `GET /members/{memberId}/settlements` | This member's net balance per counterparty, across all groups. | [`../balances/overview.md`](../balances/overview.md#get-membersmemberidsettlements) |
+
+All three share one access rule: they require a resolved identity (see
+[`../auth/backend.md`](../auth/backend.md)), and `memberId` must equal
+that identity's member id. A mismatch is rejected with
+`400 user_mismatch` — through these endpoints a caller can only ask "what
+are *my* groups/expenses/settlements", never someone else's.
+
+`.../groups` and `.../expenses` are bounded "recent activity" feeds and
+take an optional `limit` (`1`-`100`, default `20`);
+`.../settlements` takes none, since it's a complete balance summary. See
+[`../architecture.md`](../architecture.md#list-endpoints--pagination).

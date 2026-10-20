@@ -84,7 +84,10 @@ Model: [`lib/models/settlement.dart`](../../lib/models/settlement.dart).
 Repository: [`lib/repositories/settlement_repository.dart`](../../lib/repositories/settlement_repository.dart).
 
 Only the calling member may fetch their own settlements — there's no path
-to view another member's.
+to view another member's: `memberId` must equal the calling member, or the
+request is rejected with `400 user_mismatch`. That's the shared rule for
+every viewer-relative endpoint — see
+[`../members/overview.md`](../members/overview.md#viewer-relative-endpoints).
 
 ## In the UI
 
