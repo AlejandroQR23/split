@@ -24,7 +24,7 @@ import 'screens/home/home_screen.dart';
 import 'screens/invites/invite_screen.dart';
 import 'screens/onboarding/set_name_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
-import 'screens/profile/notification_settings_screen.dart';
+import 'screens/profile/preferences_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/splash/member_provisioning_error_screen.dart';
 import 'screens/splash/splash_screen.dart';
@@ -204,7 +204,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/preferences',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const NotificationSettingsScreen(),
+        builder: (context, state) => const PreferencesScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
