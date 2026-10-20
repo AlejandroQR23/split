@@ -103,12 +103,29 @@ edited, only undone (see [`payments.md`](payments.md)).
 `204`. `404 not_found`. Works unchanged on a payment — deleting one is how
 a settle-up gets undone.
 
-## Known discrepancy
+### `GET /members/{memberId}/expenses`
 
-`ExpenseRepositoryImpl.fetchExpenses` (the cross-group feed behind the
-home screen's "Recent Activity") calls `GET members/{userId}/expenses`, an
-endpoint not described above — the documented feeds are
-`GET /groups/{groupId}/expenses` (this page) and
-`GET /members/{memberId}/settlements`
-([`../balances/overview.md`](../balances/overview.md)). This is a tracked,
-unresolved finding — see [`../../todo.md`](../../todo.md) — not spec.
+Viewer-relative and cross-group: this member's most recent expenses across
+all of their groups, most recent `date` first — a bounded "recent
+activity" feed, not a full list.
+
+Query params:
+
+- `limit` (optional, integer, `1`-`100`, default `20`) — the maximum
+  number of expenses to return.
+- `type` (optional, `expense` | `payment`) — the same filter
+  `GET /groups/{groupId}/expenses` takes, applied *before* `limit`.
+
+`200` → `{ "expenses": [Expense, ...] }`, each entry the full `Expense`
+resource.
+
+Errors: `404 not_found` if the member doesn't exist;
+`400 validation_error` if `limit` is outside `1`-`100`;
+`400 user_mismatch` if `memberId` isn't the calling member — the shared
+access rule for viewer-relative endpoints, see
+[`../members/overview.md`](../members/overview.md#viewer-relative-endpoints).
+
+Backs `allExpensesProvider` (`lib/providers/expenses_provider.dart`, which
+asks for `limit: 3`) and the home screen's "Recent Activity" section, via
+`ExpenseRepositoryImpl.fetchExpenses` — which omits `limit` entirely when
+called without one, taking the server's default of `20`.

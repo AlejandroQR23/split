@@ -94,6 +94,20 @@ Main-tab navigation (`/`, `/groups`, `/profile`) is a
 `StatefulShellRoute.indexedStack` so each tab keeps its own navigation
 stack across tab switches.
 
+**Safe area.** [`ScreenScaffold`](../lib/widgets/navigation/screen_scaffold.dart)
+wraps the whole tabbed shell in one `SafeArea`, so any screen reached
+through `/`, `/groups`, or `/profile` (e.g. `GroupDetailsScreen`) gets
+notch/status-bar insets for free and never needs its own. A route declared
+with `parentNavigatorKey: _rootNavigatorKey` in `main.dart` (`/profile/edit`,
+`/profile/preferences`, `/add-expense`, …) is pushed **outside** that
+shell and gets none of it — its content renders flush under the notch if
+the screen doesn't wrap itself. Every such screen must wrap its own
+`Column`/body in a `SafeArea`, as [`EditProfileScreen`](../lib/screens/profile/edit_profile_screen.dart)
+and [`PreferencesScreen`](../lib/screens/profile/preferences_screen.dart)
+do — forgetting it is an easy mistake because the screen still looks
+correct in a simulator with no notch, and only breaks on a real
+notched/Dynamic-Island device.
+
 ## Error handling
 
 - **Fetch errors** (loading a list): render via
@@ -158,6 +172,18 @@ timezone.
   the full object (e.g. `paidBy`, `members`). The one exception is
   `Transfer.from`/`Transfer.to`, always bare ids — see
   [`balances/overview.md`](balances/overview.md).
+
+### List endpoints & pagination
+
+There's no pagination: every list endpoint returns the full collection,
+which is fine at this app's expected scale. The two bounded "recent
+activity" feeds are the only exception — `GET /members/{memberId}/groups`
+([`groups/overview.md`](groups/overview.md)) and
+`GET /members/{memberId}/expenses`
+([`expenses/overview.md`](expenses/overview.md)) both take an optional
+`limit` (integer, `1`-`100`, default `20`), because they back fixed-size
+home-screen sections rather than full lists. A `limit` outside that range
+is `400 validation_error`.
 
 ### Error shape
 

@@ -31,6 +31,7 @@ behavior, trust `docs/` and the code over `curriculum/`.
 | Groups | [`groups/overview.md`](groups/overview.md) | The `Group` resource — who's splitting expenses together |
 | Expenses | [`expenses/overview.md`](expenses/overview.md), [`expenses/payments.md`](expenses/payments.md), [`expenses/labels.md`](expenses/labels.md) | Logging shared expenses, recording settle-up payments, and tagging expenses with a reusable per-group label |
 | Balances & settling up | [`balances/overview.md`](balances/overview.md) | Computing who owes whom, and the minimum set of transfers to settle a group |
+| Notifications | [`notifications/overview.md`](notifications/overview.md) | Push for new expenses/payments and the monthly debt reminder, device-token registration, and per-member preferences |
 
 ## Other references
 
