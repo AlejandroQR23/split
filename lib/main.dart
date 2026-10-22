@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -289,7 +290,14 @@ Future<void> main() async {
     }
   });
 
-  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+    },
+    appRunner: () => runApp(
+      UncontrolledProviderScope(container: container, child: const MyApp()),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
