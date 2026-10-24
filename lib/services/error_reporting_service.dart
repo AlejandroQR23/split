@@ -8,8 +8,9 @@ abstract class ErrorReportingService {
 class SentryErrorReportingService implements ErrorReportingService {
   @override
   void setUser(String? userId) {
-    Sentry.configureScope((scope) =>
-        scope.setUser(userId == null ? null : SentryUser(id: userId)));
+    Sentry.configureScope(
+      (scope) => scope.setUser(userId == null ? null : SentryUser(id: userId)),
+    );
   }
 
   @override
