@@ -43,6 +43,12 @@ jobs:
         run: |
           echo "API_URL=${{ secrets.API_URL }}" > .env
           echo "INVITE_WEB_URL=${{ secrets.INVITE_WEB_URL }}" >> .env
+          # Optional — Sentry/PostHog no-op safely when unset, so these aren't
+          # in the required-secrets check above. Set them as repo secrets to
+          # get real error reporting/analytics out of this build.
+          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+          echo "POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> .env
+          echo "POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}" >> .env
 
       - name: Create google-services.json
         run: |
