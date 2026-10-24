@@ -32,6 +32,7 @@ behavior, trust `docs/` and the code over `curriculum/`.
 | Expenses | [`expenses/overview.md`](expenses/overview.md), [`expenses/payments.md`](expenses/payments.md), [`expenses/labels.md`](expenses/labels.md) | Logging shared expenses, recording settle-up payments, and tagging expenses with a reusable per-group label |
 | Balances & settling up | [`balances/overview.md`](balances/overview.md) | Computing who owes whom, and the minimum set of transfers to settle a group |
 | Notifications | [`notifications/overview.md`](notifications/overview.md) | Push for new expenses/payments and the monthly debt reminder, device-token registration, and per-member preferences |
+| Observability | [`observability/overview.md`](observability/overview.md) | Error reporting (Sentry) and product analytics (PostHog): identify/reset on sign-in/out, the event catalog, and what gets reported as an error vs. shown to the user |
 
 ## Other references
 
