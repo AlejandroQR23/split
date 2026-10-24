@@ -7,7 +7,7 @@ import 'package:split/repositories/auth_repository.dart';
 import 'package:split/utils/network_exception.dart';
 
 class HttpClient extends ApiHttpClient {
-  HttpClient(super.inner, this._authRepository);
+  HttpClient(super.inner, this._authRepository, {super.errorReporting});
 
   final AuthRepository _authRepository;
 
