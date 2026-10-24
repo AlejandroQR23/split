@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:split/services/error_reporting_service.dart';
 import 'package:split/utils/network_exception.dart';
 
 /// Shared request/response plumbing for the app's `http.BaseClient`s —
@@ -13,9 +14,11 @@ import 'package:split/utils/network_exception.dart';
 /// uses, and [handleUnauthorized] decides what a 401 means for it (retry
 /// with a fresh token and sign out on failure, or just let it stand).
 abstract class ApiHttpClient extends http.BaseClient {
-  ApiHttpClient(this._inner);
+  ApiHttpClient(this._inner, {ErrorReportingService? errorReporting})
+    : _errorReporting = errorReporting ?? SentryErrorReportingService();
 
   final http.Client _inner;
+  final ErrorReportingService _errorReporting;
 
   final String baseUrl = dotenv.env['API_URL']!;
 
@@ -58,19 +61,36 @@ abstract class ApiHttpClient extends http.BaseClient {
 
     if ([400, 401, 404, 422, 500].contains(response.statusCode) &&
         response.body.isNotEmpty) {
-      final errorJson = Map<String, dynamic>.from(
-        jsonDecode(response.body)['error'],
-      );
-      throw NetworkException(
-        APIError.fromJson(errorJson),
-        response.statusCode,
-      );
+      try {
+        final errorJson = Map<String, dynamic>.from(
+          jsonDecode(response.body)['error'],
+        );
+        final exception = NetworkException(
+          APIError.fromJson(errorJson),
+          response.statusCode,
+        );
+        if (response.statusCode >= 500) {
+          _errorReporting.captureException(exception, StackTrace.current);
+        }
+        throw exception;
+      } on NetworkException {
+        rethrow;
+      } catch (_) {
+        // Body wasn't the documented {"error": {...}} envelope (e.g. an
+        // HTML gateway page) — fall through to the unmapped-response
+        // reporting path.
+      }
     }
 
-    throw NetworkException(
-      APIError(message: 'Ocurrió un error inesperado', code: 'unexpected_error'),
+    final exception = NetworkException(
+      APIError(
+        message: 'Ocurrió un error inesperado',
+        code: 'unexpected_error',
+      ),
       response.statusCode,
     );
+    _errorReporting.captureException(exception, StackTrace.current);
+    throw exception;
   }
 
   @override

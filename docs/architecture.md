@@ -14,6 +14,8 @@
 | `flutter_dotenv` | Loads `API_URL` and other config from a gitignored `.env` at startup |
 | `flutter_confetti` | Celebration effect (settle-up flow) |
 | `hugeicons`, plus `shadcn_ui`'s bundled Lucide icons | Iconography |
+| `sentry_flutter` | Error reporting — see [`observability/overview.md`](observability/overview.md) |
+| `posthog_flutter` | Product analytics — see [`observability/overview.md`](observability/overview.md) |
 
 `shared_preferences` is still a `pubspec.yaml` dependency but is no longer
 used anywhere in `lib/` — it backed a "bootstrap identity" that Firebase
@@ -32,6 +34,7 @@ lib/
   utils/         cross-cutting helpers (network errors, auth redirect logic, formatting)
   theme/         design tokens (see design-system.md)
   api/           the shared http.BaseClient wrapper
+  services/      cross-cutting SDK wrappers (analytics, error reporting) behind an abstract interface, exposed via providers/
 ```
 
 ### Repository pattern

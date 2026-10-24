@@ -8,12 +8,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'firebase_options.dart';
 import 'models/member.dart';
+import 'providers/analytics_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/current_member_provider.dart';
+import 'providers/error_reporting_provider.dart';
 import 'providers/push_provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/expenses/add_expense_screen.dart';
@@ -33,6 +37,7 @@ import 'utils/auth_redirect.dart';
 import 'utils/deep_link.dart';
 import 'utils/go_router_refresh_stream.dart';
 import 'utils/push_notifications.dart';
+import 'utils/session_telemetry.dart';
 import 'widgets/navigation/screen_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -53,7 +58,8 @@ const _expenseNotificationChannelName = 'Gastos';
 
 final _localNotifications = FlutterLocalNotificationsPlugin();
 
-/// Android notification channel + foreground `onMessage` handling (see docs/notifications/overview.md).
+/// Android notification channel, iOS/Android plugin init, and foreground
+/// `onMessage` handling (see docs/notifications/overview.md).
 Future<void> _initForegroundNotifications({
   required void Function(String route) onNotificationRoute,
 }) async {
@@ -80,6 +86,11 @@ Future<void> _initForegroundNotifications({
   await _localNotifications.initialize(
     const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      ),
     ),
     onDidReceiveNotificationResponse: handleResponse,
   );
@@ -120,6 +131,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     refreshListenable: refreshStream,
+    observers: [PosthogObserver()],
     redirect: (context, state) {
       final isSignedIn = ref.read(authRepositoryProvider).currentUser != null;
       final isAuthRoute = _authRoutes.contains(state.matchedLocation);
@@ -257,39 +269,68 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  final container = ProviderContainer();
-  listenForInviteDeepLinks(
-    (token) => container.read(routerProvider).go('/invites/$token'),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+    },
+    appRunner: () async {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      final container = ProviderContainer();
+      await container.read(analyticsServiceProvider).init();
+
+      listenForInviteDeepLinks(
+        (token) => container.read(routerProvider).go('/invites/$token'),
+      );
+
+      void goToNotificationRoute(String route) =>
+          container.read(routerProvider).go(route);
+
+      // Shared by both notification-tap paths (backgrounded/killed and
+      // foreground) — see docs/notifications/overview.md.
+      void handleNotificationRoute(String route) {
+        if (container.read(authRepositoryProvider).currentUser == null) {
+          container.read(pendingNotificationRouteProvider.notifier).state =
+              route;
+        } else {
+          goToNotificationRoute(route);
+        }
+      }
+
+      await _initForegroundNotifications(
+        onNotificationRoute: handleNotificationRoute,
+      );
+      listenForNotificationTaps(handleNotificationRoute);
+      container.listen(currentMemberProvider, (previous, next) {
+        if (next.value != null) {
+          consumePendingNotificationRoute(container, goToNotificationRoute);
+          unawaited(
+            registerDeviceForPush(container.read(deviceRepositoryProvider)),
+          );
+          identifyTelemetryUser(
+            errorReporting: container.read(errorReportingServiceProvider),
+            analytics: container.read(analyticsServiceProvider),
+            memberId: next.value!.id,
+          );
+        }
+      });
+      container.listen(authStateProvider, (previous, next) {
+        if (previous?.value != null && next.value == null) {
+          resetTelemetryOnSignOut(
+            errorReporting: container.read(errorReportingServiceProvider),
+            analytics: container.read(analyticsServiceProvider),
+          );
+        }
+      });
+
+      runApp(
+        UncontrolledProviderScope(container: container, child: const MyApp()),
+      );
+    },
   );
-
-  void goToNotificationRoute(String route) =>
-      container.read(routerProvider).go(route);
-
-  // Shared by both notification-tap paths (backgrounded/killed and
-  // foreground) — see docs/notifications/overview.md.
-  void handleNotificationRoute(String route) {
-    if (container.read(authRepositoryProvider).currentUser == null) {
-      container.read(pendingNotificationRouteProvider.notifier).state =
-          route;
-    } else {
-      goToNotificationRoute(route);
-    }
-  }
-
-  await _initForegroundNotifications(
-    onNotificationRoute: handleNotificationRoute,
-  );
-  listenForNotificationTaps(handleNotificationRoute);
-  container.listen(currentMemberProvider, (previous, next) {
-    if (next.value != null) {
-      consumePendingNotificationRoute(container, goToNotificationRoute);
-      unawaited(registerDeviceForPush(container.read(deviceRepositoryProvider)));
-    }
-  });
-
-  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

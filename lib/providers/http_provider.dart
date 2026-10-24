@@ -3,13 +3,18 @@ import 'package:http/http.dart' as http;
 
 import 'package:split/api/http_client.dart';
 import 'package:split/providers/auth_provider.dart';
+import 'package:split/providers/error_reporting_provider.dart';
 
 final httpClientProvider = Provider<http.BaseClient>((ref) {
   final innerClient = http.Client();
 
   final authRepository = ref.watch(authRepositoryProvider);
 
-  final httpClient = HttpClient(innerClient, authRepository);
+  final httpClient = HttpClient(
+    innerClient,
+    authRepository,
+    errorReporting: ref.watch(errorReportingServiceProvider),
+  );
 
   ref.onDispose(() {
     httpClient.close();

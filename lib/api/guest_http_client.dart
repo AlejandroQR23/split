@@ -10,7 +10,7 @@ import 'package:split/api/api_http_client.dart';
 /// "sign the user out." Every request gets the same fixed bearer for the
 /// client's whole lifetime.
 class GuestHttpClient extends ApiHttpClient {
-  GuestHttpClient(super.inner, this._inviteToken);
+  GuestHttpClient(super.inner, this._inviteToken, {super.errorReporting});
 
   final String _inviteToken;
 

@@ -9,6 +9,7 @@ import 'package:split/models/expense.dart';
 import 'package:split/models/group.dart';
 import 'package:split/models/invite.dart';
 import 'package:split/models/transfer.dart';
+import 'package:split/providers/error_reporting_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/repositories/guest_groups_repository.dart';
 import 'package:split/repositories/invite_repository.dart';
@@ -31,13 +32,16 @@ final pendingInviteTokenProvider = StateProvider<String?>((ref) => null);
 
 /// One [GuestHttpClient] per invite token — every guest fetch for the same
 /// token shares one client instance.
-final guestHttpClientProvider = Provider.autoDispose.family<http.Client, String>(
-  (ref, token) {
-    final client = GuestHttpClient(http.Client(), token);
-    ref.onDispose(client.close);
-    return client;
-  },
-);
+final guestHttpClientProvider = Provider.autoDispose
+    .family<http.Client, String>((ref, token) {
+      final client = GuestHttpClient(
+        http.Client(),
+        token,
+        errorReporting: ref.watch(errorReportingServiceProvider),
+      );
+      ref.onDispose(client.close);
+      return client;
+    });
 
 final invitePreviewProvider = FutureProvider.autoDispose
     .family<InvitePreview, String>((ref, token) {

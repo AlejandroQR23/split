@@ -4,10 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:split/providers/analytics_provider.dart';
 import 'package:split/providers/auth_provider.dart';
 import 'package:split/providers/invite_provider.dart';
 import 'package:split/repositories/auth_repository.dart';
 import 'package:split/screens/auth/auth_screen.dart';
+import 'package:split/services/analytics_service.dart';
+
+import '../../fakes/fake_analytics_service.dart';
 
 class _FakeAuthRepository implements AuthRepository {
   _FakeAuthRepository({this.error});
@@ -58,10 +62,15 @@ Future<void> _pumpAuthScreen(
   WidgetTester tester,
   AuthRepository authRepository, {
   AuthMode initialMode = AuthMode.login,
+  AnalyticsService? analytics,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
+      overrides: [
+        authRepositoryProvider.overrideWithValue(authRepository),
+        if (analytics != null)
+          analyticsServiceProvider.overrideWithValue(analytics),
+      ],
       child: ShadApp(
         home: Scaffold(body: AuthScreen(initialMode: initialMode)),
       ),
@@ -72,9 +81,7 @@ Future<void> _pumpAuthScreen(
 final _submitButton = find.byKey(const Key('emailPasswordSubmitButton'));
 
 void main() {
-  testWidgets('opens on the Login tab and submits via signIn', (
-    tester,
-  ) async {
+  testWidgets('opens on the Login tab and submits via signIn', (tester) async {
     final authRepository = _FakeAuthRepository();
     await _pumpAuthScreen(tester, authRepository);
 
@@ -116,6 +123,86 @@ void main() {
     expect(authRepository.signInCallCount, 0);
   });
 
+  testWidgets('captures a sign_in analytics event on successful login', (
+    tester,
+  ) async {
+    final authRepository = _FakeAuthRepository();
+    final analytics = FakeAnalyticsService();
+    await _pumpAuthScreen(tester, authRepository, analytics: analytics);
+
+    await tester.enterText(find.byType(ShadInput).at(0), 'alex@example.com');
+    await tester.enterText(find.byType(ShadInput).at(1), 'correct-password');
+    await tester.tap(_submitButton);
+    await tester.pump();
+    await tester.pump();
+
+    expect(analytics.captured, [('sign_in', null)]);
+  });
+
+  testWidgets('captures a sign_up analytics event on successful sign-up', (
+    tester,
+  ) async {
+    final authRepository = _FakeAuthRepository();
+    final analytics = FakeAnalyticsService();
+    await _pumpAuthScreen(
+      tester,
+      authRepository,
+      initialMode: AuthMode.signUp,
+      analytics: analytics,
+    );
+
+    await tester.enterText(find.byType(ShadInput).at(0), 'new@example.com');
+    await tester.enterText(find.byType(ShadInput).at(1), 'a-new-password');
+    await tester.tap(_submitButton);
+    await tester.pump();
+    await tester.pump();
+
+    expect(analytics.captured, [('sign_up', null)]);
+  });
+
+  testWidgets('does not capture a sign_in analytics event on failed login', (
+    tester,
+  ) async {
+    final authRepository = _FakeAuthRepository(
+      // ignore: invalid_use_of_protected_member
+      error: FirebaseAuthException(code: 'wrong-password'),
+    );
+    final analytics = FakeAnalyticsService();
+    await _pumpAuthScreen(tester, authRepository, analytics: analytics);
+
+    await tester.enterText(find.byType(ShadInput).at(0), 'alex@example.com');
+    await tester.enterText(find.byType(ShadInput).at(1), 'wrong-password');
+    await tester.tap(_submitButton);
+    await tester.pump();
+    await tester.pump();
+
+    expect(analytics.captured, isEmpty);
+  });
+
+  testWidgets('does not capture a sign_up analytics event on failed sign-up', (
+    tester,
+  ) async {
+    final authRepository = _FakeAuthRepository(
+      // ignore: invalid_use_of_protected_member
+      error: FirebaseAuthException(code: 'email-already-in-use'),
+    );
+    final analytics = FakeAnalyticsService();
+    await _pumpAuthScreen(
+      tester,
+      authRepository,
+      initialMode: AuthMode.signUp,
+      analytics: analytics,
+    );
+
+    await tester.enterText(find.byType(ShadInput).at(0), 'new@example.com');
+    await tester.enterText(find.byType(ShadInput).at(1), 'a-new-password');
+    await tester.tap(_submitButton);
+    await tester.pump();
+    await tester.pump();
+
+    expect(analytics.captured, isEmpty);
+  });
+
   testWidgets('tapping the Sign up tab switches the submit button to Sign up', (
     tester,
   ) async {
@@ -152,36 +239,32 @@ void main() {
     expect(find.text('Contraseña incorrecta.'), findsOneWidget);
   });
 
-  testWidgets(
-    'switching to the Login tab clears a pending invite token',
-    (tester) async {
-      final authRepository = _FakeAuthRepository();
-      final container = ProviderContainer(
-        overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
-      );
-      addTearDown(container.dispose);
-      container.read(pendingInviteTokenProvider.notifier).state =
-          'inv_test123';
+  testWidgets('switching to the Login tab clears a pending invite token', (
+    tester,
+  ) async {
+    final authRepository = _FakeAuthRepository();
+    final container = ProviderContainer(
+      overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
+    );
+    addTearDown(container.dispose);
+    container.read(pendingInviteTokenProvider.notifier).state = 'inv_test123';
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: ShadApp(
-            home: Scaffold(
-              body: AuthScreen(initialMode: AuthMode.signUp),
-            ),
-          ),
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: ShadApp(
+          home: Scaffold(body: AuthScreen(initialMode: AuthMode.signUp)),
         ),
-      );
+      ),
+    );
 
-      expect(container.read(pendingInviteTokenProvider), 'inv_test123');
+    expect(container.read(pendingInviteTokenProvider), 'inv_test123');
 
-      await tester.tap(find.text('Entrar'));
-      await tester.pump();
+    await tester.tap(find.text('Entrar'));
+    await tester.pump();
 
-      expect(container.read(pendingInviteTokenProvider), isNull);
-    },
-  );
+    expect(container.read(pendingInviteTokenProvider), isNull);
+  });
 
   testWidgets('toggles password visibility', (tester) async {
     final authRepository = _FakeAuthRepository();

@@ -33,6 +33,12 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Per-platform build output (Xcode SPM package checkouts land under these too)
+/ios/build/
+/macos/build/
+/android/build/
+/android/app/build/
+
 # Symbolication related
 app.*.symbols
 
