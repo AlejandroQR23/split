@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  FIREBASE_ANDROID_APP_ID: '1:714114490823:android:b8bf8070d7da99040879e2'
+  FIREBASE_ANDROID_APP_ID: '1:714114490823:android:c8720c1192f1b2de0879e2'
   FIREBASE_TESTER_GROUP: 'Tilines'
 
 jobs:
