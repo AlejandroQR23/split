@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/group.dart';
+import 'package:split/providers/analytics_provider.dart';
 import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/repositories/group_repository.dart';
@@ -32,8 +33,13 @@ class GroupsNotifier extends AsyncNotifier<List<Group>> {
   }
 
   Future<void> addGroup(CreateGroupInput group) async {
+    final analytics = ref.read(analyticsServiceProvider);
     await _mutateAndRefresh(
       () => ref.read(groupRepositoryProvider)!.addGroup(group),
+    );
+    analytics.capture(
+      'group_created',
+      properties: {'memberCount': group.memberIds.length},
     );
   }
 

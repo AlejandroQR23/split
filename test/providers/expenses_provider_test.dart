@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:split/models/expense.dart';
 import 'package:split/models/member.dart';
+import 'package:split/providers/analytics_provider.dart';
 import 'package:split/providers/expenses_provider.dart';
 import 'package:split/repositories/expense_repository.dart';
+
+import '../fakes/fake_analytics_service.dart';
 
 // A real HTTP call yields to the event loop (not just the microtask queue),
 // which is what gives Riverpod's `Timer(Duration.zero, ...)` autoDispose
@@ -36,6 +39,12 @@ class _FakeExpenseRepository implements ExpenseRepository {
   @override
   Future<void> updateExpense(Expense updatedExpense) =>
       _simulateNetworkCall(null);
+}
+
+class _FailingAddExpenseRepository extends _FakeExpenseRepository {
+  @override
+  Future<void> addExpense(CreateExpenseInput expense, String groupId) =>
+      Future.error(Exception('boom'));
 }
 
 /// Records `addPayment` calls and, once one has succeeded, starts returning
@@ -224,5 +233,108 @@ void main() {
         );
 
     expect(repository.lastCreateInput!.repeatMonthly, isTrue);
+  });
+
+  test(
+    'addEvenExpense captures expense_created with amount and split count',
+    () async {
+      final analytics = FakeAnalyticsService();
+      final container = ProviderContainer(
+        overrides: [
+          expenseRepositoryProvider.overrideWithValue(_FakeExpenseRepository()),
+          analyticsServiceProvider.overrideWithValue(analytics),
+        ],
+      );
+      addTearDown(container.dispose);
+      final member = Member(id: 'm1', name: 'Alex');
+
+      await container
+          .read(expensesProvider('group-1').notifier)
+          .addEvenExpense(
+            concept: 'Dinner',
+            amount: 20,
+            paidBy: member,
+            splitBetween: [member],
+          );
+
+      // Compared field-by-field rather than as a whole record: Dart record
+      // equality delegates to the Map field's own `==`, which is identity-based
+      // (Map doesn't override it), so two structurally-equal-but-distinct map
+      // literals are never `==`.
+      expect(analytics.captured, hasLength(1));
+      expect(analytics.captured.single.$1, 'expense_created');
+      expect(analytics.captured.single.$2, {'amount': 20.0, 'splitCount': 1});
+    },
+  );
+
+  test(
+    'addEvenExpense does not capture an event when the mutation fails',
+    () async {
+      final analytics = FakeAnalyticsService();
+      final container = ProviderContainer(
+        overrides: [
+          expenseRepositoryProvider.overrideWithValue(
+            _FailingAddExpenseRepository(),
+          ),
+          analyticsServiceProvider.overrideWithValue(analytics),
+        ],
+      );
+      addTearDown(container.dispose);
+      final member = Member(id: 'm1', name: 'Alex');
+
+      await expectLater(
+        container
+            .read(expensesProvider('group-1').notifier)
+            .addEvenExpense(
+              concept: 'Dinner',
+              amount: 20,
+              paidBy: member,
+              splitBetween: [member],
+            ),
+        throwsA(isA<Exception>()),
+      );
+      expect(analytics.captured, isEmpty);
+    },
+  );
+
+  test('settleUp does not capture an event when the mutation fails', () async {
+    final analytics = FakeAnalyticsService();
+    final repository = _RecordingExpenseRepository()..failNextPayment = true;
+    final container = ProviderContainer(
+      overrides: [
+        expenseRepositoryProvider.overrideWithValue(repository),
+        analyticsServiceProvider.overrideWithValue(analytics),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await expectLater(
+      container
+          .read(expensesProvider('group-1').notifier)
+          .settleUp(fromMemberId: 'm2', toMemberId: 'm1', amount: 20),
+      throwsA(isA<Exception>()),
+    );
+    expect(analytics.captured, isEmpty);
+  });
+
+  test('settleUp captures settle_up_recorded with the amount', () async {
+    final analytics = FakeAnalyticsService();
+    final container = ProviderContainer(
+      overrides: [
+        expenseRepositoryProvider.overrideWithValue(
+          _RecordingExpenseRepository(),
+        ),
+        analyticsServiceProvider.overrideWithValue(analytics),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container
+        .read(expensesProvider('group-1').notifier)
+        .settleUp(fromMemberId: 'm2', toMemberId: 'm1', amount: 20);
+
+    expect(analytics.captured, hasLength(1));
+    expect(analytics.captured.single.$1, 'settle_up_recorded');
+    expect(analytics.captured.single.$2, {'amount': 20.0});
   });
 }

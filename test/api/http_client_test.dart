@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:split/api/http_client.dart';
 import 'package:split/repositories/auth_repository.dart';
+import 'package:split/services/error_reporting_service.dart';
 import 'package:split/utils/network_exception.dart';
 
 class _FakeAuthRepository implements AuthRepository {
@@ -55,6 +56,17 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> updateDisplayName(String name) {
     throw UnimplementedError();
   }
+}
+
+class _RecordingErrorReporting implements ErrorReportingService {
+  final List<Object> reported = [];
+
+  @override
+  void setUser(String? userId) {}
+
+  @override
+  void captureException(Object error, StackTrace stackTrace) =>
+      reported.add(error);
 }
 
 http.Response _errorResponse(String code, int statusCode) {
@@ -200,4 +212,44 @@ void main() {
       expect(authRepository.signOutCallCount, 0);
     },
   );
+
+  test('reports a 500 response to error reporting', () async {
+    final authRepository = _FakeAuthRepository(normalToken: 'tok');
+    final errorReporting = _RecordingErrorReporting();
+    final inner = MockClient(
+      (request) async => _errorResponse('internal_error', 500),
+    );
+    final client = HttpClient(
+      inner,
+      authRepository,
+      errorReporting: errorReporting,
+    );
+
+    await expectLater(
+      client.get(Uri.parse('groups')),
+      throwsA(isA<NetworkException>()),
+    );
+
+    expect(errorReporting.reported, hasLength(1));
+  });
+
+  test('does not report a 422 validation error to error reporting', () async {
+    final authRepository = _FakeAuthRepository(normalToken: 'tok');
+    final errorReporting = _RecordingErrorReporting();
+    final inner = MockClient(
+      (request) async => _errorResponse('validation_error', 422),
+    );
+    final client = HttpClient(
+      inner,
+      authRepository,
+      errorReporting: errorReporting,
+    );
+
+    await expectLater(
+      client.get(Uri.parse('groups')),
+      throwsA(isA<NetworkException>()),
+    );
+
+    expect(errorReporting.reported, isEmpty);
+  });
 }

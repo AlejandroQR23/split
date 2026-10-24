@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:split/models/expense.dart';
 import 'package:split/models/member.dart';
+import 'package:split/providers/analytics_provider.dart';
 import 'package:split/providers/current_member_provider.dart';
 import 'package:split/providers/http_provider.dart';
 import 'package:split/providers/settlement_provider.dart';
@@ -94,8 +95,13 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       labelId: labelId,
       repeatMonthly: repeatMonthly,
     );
+    final analytics = ref.read(analyticsServiceProvider);
     await _mutateAndRefresh(
       () => ref.read(expenseRepositoryProvider)!.addExpense(expense, groupId),
+    );
+    analytics.capture(
+      'expense_created',
+      properties: {'amount': amount, 'splitCount': splitCount},
     );
   }
 
@@ -114,9 +120,11 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
       amount: amount,
       date: DateTime.now(),
     );
+    final analytics = ref.read(analyticsServiceProvider);
     await _mutateAndRefresh(
       () => ref.read(expenseRepositoryProvider)!.addPayment(payment, groupId),
     );
+    analytics.capture('settle_up_recorded', properties: {'amount': amount});
   }
 
   Future<void> removeExpense(String expenseId) async {
