@@ -33,7 +33,9 @@ android {
         applicationId = "com.example.split"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // sentry_flutter 10.x requires API 26+ — Flutter's own default (24) is
+        // no longer enough once that dependency is in the tree.
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
