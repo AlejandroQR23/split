@@ -51,7 +51,7 @@ dependencies:
   flutter_confetti: ^0.9.2
   app_links: ^7.2.1
   share_plus: ^13.3.0
-  sentry_flutter: ^8.14.2
+  sentry_flutter: ^10.2.0
   posthog_flutter: ^5.56.1
 
 dev_dependencies:
