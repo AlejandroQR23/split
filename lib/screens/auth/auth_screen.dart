@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../providers/analytics_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/invite_provider.dart';
 import '../../theme/app_colors.dart';
@@ -59,8 +60,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       final repository = ref.read(authRepositoryProvider);
       if (_mode == AuthMode.login) {
         await repository.signIn(email: email.trim(), password: password);
+        if (!mounted) return;
+        ref.read(analyticsServiceProvider).capture('sign_in');
       } else {
         await repository.signUp(email: email.trim(), password: password);
+        if (!mounted) return;
+        ref.read(analyticsServiceProvider).capture('sign_up');
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
